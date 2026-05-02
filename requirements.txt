@@ -1,0 +1,18 @@
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+gunicorn==21.2.0  # Production process manager (Linux)
+sqlalchemy==2.0.25
+python-dotenv==1.0.0
+pydantic==2.6.0
+pydantic-settings==2.2.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1  # bcrypt 5.x is incompatible with passlib 1.7.4
+pyodbc==5.2.0  # SQL Server ODBC driver
+python-multipart==0.0.9  # Required for file uploads (UploadFile)
+email-validator==2.1.0
+httpx==0.28.1  # Async HTTP client for SMS API calls
+Pillow==10.2.0  # Image processing for photo thumbnails
+numpy==1.26.4  # Fast numerical operations
+pandas==2.2.0  # Data analysis and aggregations
+pyzk>=0.9      # ZKTeco device protocol
