@@ -1,0 +1,10 @@
+[Unit]
+Description=Stop ws_sink at 21:00 IST
+
+[Timer]
+OnCalendar=*-*-* 21:00:00 Asia/Kolkata
+Persistent=false
+Unit=ws_sink-stop.service
+
+[Install]
+WantedBy=timers.target

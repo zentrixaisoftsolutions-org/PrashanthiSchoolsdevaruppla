@@ -1,0 +1,436 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* ===== Global Dark Mode Theme ===== */
+
+/* Body & root backgrounds */
+.dark body,
+.dark {
+  color-scheme: dark;
+}
+
+/* White cards / panels → dark surface */
+.dark .bg-white {
+  background-color: #1e293b !important; /* slate-800 */
+}
+
+/* Light gray backgrounds → dark base */
+.dark .bg-gray-50 {
+  background-color: #0f172a !important; /* slate-900 */
+}
+.dark .bg-gray-100 {
+  background-color: #111827 !important; /* gray-900 */
+}
+
+/* Text colors */
+.dark .text-gray-900 {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+.dark .text-gray-800 {
+  color: #e2e8f0 !important; /* slate-200 */
+}
+.dark .text-gray-700 {
+  color: #cbd5e1 !important; /* slate-300 */
+}
+.dark .text-gray-600 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+.dark .text-gray-500 {
+  color: #64748b !important; /* slate-500 */
+}
+
+/* Borders */
+.dark .border-gray-200 {
+  border-color: #334155 !important; /* slate-700 */
+}
+.dark .border-gray-300 {
+  border-color: #475569 !important; /* slate-600 */
+}
+.dark .border-gray-100 {
+  border-color: #1e293b !important; /* slate-800 */
+}
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #334155 !important;
+}
+
+/* Table header backgrounds */
+.dark .bg-gray-50 th,
+.dark thead.bg-gray-50 {
+  background-color: #1e293b !important;
+}
+.dark tr:hover {
+  background-color: rgba(51, 65, 85, 0.3) !important;
+}
+
+/* Inputs / selects */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #e2e8f0 !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Modals / overlays */
+.dark .bg-black\/50,
+.dark .bg-black\/30 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Shadow adjustments → darker in dark mode */
+.dark .shadow-sm,
+.dark .shadow,
+.dark .shadow-md,
+.dark .shadow-lg {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Hover states on white/light bg */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #334155 !important;
+}
+.dark .hover\:bg-gray-100:hover {
+  background-color: #1e293b !important;
+}
+
+/* Badge / pill backgrounds */
+.dark .bg-indigo-100 {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+}
+.dark .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+}
+.dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+.dark .bg-yellow-100 {
+  background-color: rgba(234, 179, 8, 0.15) !important;
+}
+.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+.dark .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.15) !important;
+}
+.dark .bg-orange-100 {
+  background-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+/* Rounded card containers that use ring/border */
+.dark .ring-1.ring-gray-200,
+.dark .ring-gray-200 {
+  --tw-ring-color: #334155 !important;
+}
+
+/* Scrollbar in dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Smooth transition for theme switch */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* ===== Report Card: force light-mode (on-screen preview + print) ===== */
+/* Backgrounds */
+.dark .report-card-light .bg-white { background-color: #ffffff !important; }
+.dark .report-card-light .bg-gray-50 { background-color: #f9fafb !important; }
+.dark .report-card-light .bg-gray-100 { background-color: #f3f4f6 !important; }
+
+/* Text colors */
+.dark .report-card-light .text-gray-900 { color: #111827 !important; }
+.dark .report-card-light .text-gray-800 { color: #1f2937 !important; }
+.dark .report-card-light .text-gray-700 { color: #374151 !important; }
+.dark .report-card-light .text-gray-600 { color: #4b5563 !important; }
+.dark .report-card-light .text-gray-500 { color: #6b7280 !important; }
+.dark .report-card-light .text-gray-400 { color: #9ca3af !important; }
+
+/* Borders */
+.dark .report-card-light .border-gray-200 { border-color: #e5e7eb !important; }
+.dark .report-card-light .border-gray-100 { border-color: #f3f4f6 !important; }
+.dark .report-card-light .border-gray-300 { border-color: #d1d5db !important; }
+.dark .report-card-light .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.dark .report-card-light .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e5e7eb !important;
+}
+
+/* Badge / pill backgrounds */
+.dark .report-card-light .bg-indigo-100 { background-color: #e0e7ff !important; }
+.dark .report-card-light .bg-green-100 { background-color: #dcfce7 !important; }
+.dark .report-card-light .bg-red-100 { background-color: #fee2e2 !important; }
+.dark .report-card-light .bg-yellow-100 { background-color: #fef9c3 !important; }
+.dark .report-card-light .bg-blue-100 { background-color: #dbeafe !important; }
+.dark .report-card-light .bg-purple-100 { background-color: #f3e8ff !important; }
+.dark .report-card-light .bg-orange-100 { background-color: #ffedd5 !important; }
+.dark .report-card-light .bg-emerald-100 { background-color: #d1fae5 !important; }
+.dark .report-card-light .bg-amber-100 { background-color: #fef3c7 !important; }
+
+/* Colored text */
+.dark .report-card-light .text-indigo-800 { color: #3730a3 !important; }
+.dark .report-card-light .text-indigo-600 { color: #4f46e5 !important; }
+.dark .report-card-light .text-purple-800 { color: #6b21a8 !important; }
+.dark .report-card-light .text-purple-600 { color: #9333ea !important; }
+.dark .report-card-light .text-purple-500 { color: #a855f7 !important; }
+.dark .report-card-light .text-emerald-600 { color: #059669 !important; }
+.dark .report-card-light .text-emerald-700 { color: #047857 !important; }
+.dark .report-card-light .text-blue-600 { color: #2563eb !important; }
+.dark .report-card-light .text-blue-700 { color: #1d4ed8 !important; }
+.dark .report-card-light .text-blue-500 { color: #3b82f6 !important; }
+.dark .report-card-light .text-amber-600 { color: #d97706 !important; }
+.dark .report-card-light .text-amber-700 { color: #b45309 !important; }
+.dark .report-card-light .text-amber-500 { color: #f59e0b !important; }
+.dark .report-card-light .text-orange-600 { color: #ea580c !important; }
+.dark .report-card-light .text-orange-700 { color: #c2410c !important; }
+.dark .report-card-light .text-red-600 { color: #dc2626 !important; }
+.dark .report-card-light .text-red-700 { color: #b91c1c !important; }
+.dark .report-card-light .text-slate-700 { color: #334155 !important; }
+.dark .report-card-light .text-slate-500 { color: #64748b !important; }
+.dark .report-card-light .text-pink-500 { color: #ec4899 !important; }
+
+/* Colored borders */
+.dark .report-card-light .border-indigo-100 { border-color: #e0e7ff !important; }
+.dark .report-card-light .border-purple-100 { border-color: #f3e8ff !important; }
+.dark .report-card-light .border-purple-200 { border-color: #e9d5ff !important; }
+.dark .report-card-light .border-slate-200 { border-color: #e2e8f0 !important; }
+.dark .report-card-light .border-blue-200 { border-color: #bfdbfe !important; }
+.dark .report-card-light .border-emerald-200 { border-color: #a7f3d0 !important; }
+.dark .report-card-light .border-amber-200 { border-color: #fde68a !important; }
+
+/* Table row hover */
+.dark .report-card-light tr:hover {
+  background-color: rgba(243, 244, 246, 0.5) !important;
+}
+
+/* Shadows */
+.dark .report-card-light .shadow-sm,
+.dark .report-card-light .shadow,
+.dark .report-card-light .shadow-md,
+.dark .report-card-light .shadow-lg {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ===== Print: also force light-mode ===== */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  *, *::before, *::after {
+    transition: none !important;
+  }
+
+  /* ===== Report Card: fit everything on one page ===== */
+  .report-card-print {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Header */
+  .report-card-print > div:first-child {
+    padding: 8px 14px !important;
+  }
+  .report-card-print > div:first-child h1 {
+    font-size: 16px !important;
+  }
+  .report-card-print > div:first-child p,
+  .report-card-print > div:first-child .text-lg {
+    font-size: 11px !important;
+  }
+  .report-card-print > div:first-child .text-sm {
+    font-size: 10px !important;
+  }
+  .report-card-print > div:first-child .h-16 {
+    height: 36px !important;
+    width: 36px !important;
+  }
+  .report-card-print > div:first-child .w-10 {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  /* Main content padding */
+  .report-card-print > .p-6 {
+    padding: 8px 14px !important;
+  }
+
+  /* All mb-6 gaps → tighter */
+  .report-card-print .mb-6 {
+    margin-bottom: 6px !important;
+  }
+  .report-card-print .mb-3 {
+    margin-bottom: 3px !important;
+  }
+  .report-card-print .mb-1 {
+    margin-bottom: 1px !important;
+  }
+
+  /* Grid gaps */
+  .report-card-print .gap-6 {
+    gap: 8px !important;
+  }
+  .report-card-print .gap-4 {
+    gap: 6px !important;
+  }
+  .report-card-print .gap-3 {
+    gap: 4px !important;
+  }
+  .report-card-print .gap-2 {
+    gap: 3px !important;
+  }
+
+  /* Exam & Student detail boxes */
+  .report-card-print .rounded-xl {
+    border-radius: 6px !important;
+  }
+  .report-card-print .p-5 {
+    padding: 6px 10px !important;
+  }
+  .report-card-print .p-4 {
+    padding: 5px 8px !important;
+  }
+
+  /* Section header icons - smaller */
+  .report-card-print .h-8.w-8 {
+    height: 20px !important;
+    width: 20px !important;
+  }
+  .report-card-print .h-8.w-8 svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .report-card-print .h-14 {
+    height: 34px !important;
+    width: 34px !important;
+  }
+
+  /* Table cells */
+  .report-card-print table th {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+  }
+  .report-card-print table td {
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+  }
+  .report-card-print table .py-3 {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Summary cards */
+  .report-card-print .grid-cols-5 .text-2xl {
+    font-size: 14px !important;
+  }
+  .report-card-print .grid-cols-5 .text-xs {
+    font-size: 8px !important;
+  }
+  .report-card-print .grid-cols-5 > div {
+    padding: 4px 6px !important;
+  }
+
+  /* Remarks */
+  .report-card-print .bg-gradient-to-r.from-indigo-50 {
+    padding: 5px 10px !important;
+  }
+  .report-card-print .bg-gradient-to-r.from-indigo-50 h4 {
+    font-size: 10px !important;
+    margin-bottom: 1px !important;
+  }
+  .report-card-print .bg-gradient-to-r.from-indigo-50 p {
+    font-size: 9px !important;
+  }
+
+  /* Performance bars */
+  .report-card-print .space-y-4 > div {
+    margin-top: 3px !important;
+    margin-bottom: 0 !important;
+  }
+  .report-card-print .h-6 {
+    height: 16px !important;
+  }
+  .report-card-print .w-28 {
+    width: 80px !important;
+    font-size: 9px !important;
+  }
+
+  /* Legend */
+  .report-card-print .pt-4 {
+    padding-top: 3px !important;
+  }
+  .report-card-print .mt-4 {
+    margin-top: 3px !important;
+  }
+  .report-card-print .w-4.h-4 {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  /* Footer */
+  .report-card-print > div:last-child {
+    padding: 3px 14px !important;
+  }
+
+  /* Font sizes override */
+  .report-card-print .text-sm {
+    font-size: 9px !important;
+  }
+  .report-card-print .text-xs {
+    font-size: 8px !important;
+  }
+  .report-card-print .font-semibold {
+    font-size: inherit !important;
+  }
+
+  /* Attendance section */
+  .report-card-print .space-y-1 > div {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}

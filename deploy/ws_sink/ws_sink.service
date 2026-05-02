@@ -1,0 +1,19 @@
+[Unit]
+Description=AiFace WebSocket sink (writes to easyTimePro Postgres + SchoolERP)
+After=network-online.target docker.service sms-backend.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ktsbnd
+# WorkingDirectory must be the SchoolERP backend so its config/.env loads cleanly
+WorkingDirectory=/home/ktsbnd/SMS/backend
+Environment=SCHOOLERP_PATH=/home/ktsbnd/SMS/backend
+ExecStart=/home/ktsbnd/SMS/backend/venv/bin/python /home/ktsbnd/ws_sink.py
+Restart=always
+RestartSec=3
+StandardOutput=append:/home/ktsbnd/ws_sink.out
+StandardError=append:/home/ktsbnd/ws_sink.out
+
+[Install]
+WantedBy=multi-user.target

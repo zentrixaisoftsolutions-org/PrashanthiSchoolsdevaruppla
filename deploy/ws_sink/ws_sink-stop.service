@@ -1,0 +1,6 @@
+[Unit]
+Description=Stop ws_sink (helper for ws_sink-stop.timer)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl stop ws_sink.service

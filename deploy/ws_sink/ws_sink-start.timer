@@ -1,0 +1,10 @@
+[Unit]
+Description=Start ws_sink at 07:00 IST
+
+[Timer]
+OnCalendar=*-*-* 07:00:00 Asia/Kolkata
+Persistent=true
+Unit=ws_sink.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,7 @@
+- This is a React + TypeScript project using Vite as the build tool.
+- Tailwind CSS is used for styling — use utility classes.
+- The app connects to a FastAPI backend at http://localhost:8000.
+- All API calls go through src/services/api.ts which adds JWT auth tokens.
+- Role-based access control is implemented via AuthContext.
+- Use React Router v6 for navigation.
+- Follow the existing service layer pattern for new API integrations.
