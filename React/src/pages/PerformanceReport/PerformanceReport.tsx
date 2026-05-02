@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import studentService, { Student, StudentListResponse, PerformanceReport as PerformanceReportType } from '../../services/studentService';
+import schoolSettingsService, { SchoolSettings } from '../../services/schoolSettingsService';
 import { useReactToPrint } from 'react-to-print';
 import logoImg from '../../assets/logo.jpg';
 
@@ -16,10 +17,12 @@ const PerformanceReport: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [schoolSettings, setSchoolSettings] = useState<SchoolSettings | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchStudents();
+    schoolSettingsService.get().then(setSchoolSettings).catch(() => {});
   }, [page, searchTerm]);
 
   const fetchStudents = async () => {
@@ -107,9 +110,9 @@ const PerformanceReport: React.FC = () => {
           {/* Header */}
           <div className="text-center border-b-2 border-indigo-900 pb-4 mb-6">
             <div className="flex items-center justify-center gap-4 mb-2">
-              <img src={logoImg} alt="School Logo" className="h-16 w-16 object-contain" />
+              <img src={(schoolSettings ? schoolSettingsService.getLogoUrl(schoolSettings) : null) || logoImg} alt="School Logo" className="h-16 w-16 object-contain" />
               <div>
-                <h1 className="text-2xl font-bold text-indigo-900">KRISHNAVENI TALENT HIGH SCHOOL</h1>
+                <h1 className="text-2xl font-bold text-indigo-900">SRI SAI PRASANTHI VIDYANIKETAN</h1>
                 <p className="text-sm text-gray-600">MENTORED FOR LIFE</p>
               </div>
             </div>
@@ -298,7 +301,7 @@ const PerformanceReport: React.FC = () => {
           {/* Footer */}
           <div className="mt-8 pt-4 border-t text-center text-sm text-gray-500">
             <p>Generated on: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}</p>
-            <p className="mt-2 font-medium text-indigo-800">KRISHNAVENI TALENT HIGH SCHOOL - MENTORED FOR LIFE</p>
+            <p className="mt-2 font-medium text-indigo-800">SRI SAI PRASANTHI VIDYANIKETAN - MENTORED FOR LIFE</p>
           </div>
         </div>
 

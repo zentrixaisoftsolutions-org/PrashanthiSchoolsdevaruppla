@@ -20,6 +20,7 @@ import scholasticService, {
 } from '../../services/scholasticService';
 import academicYearService, { AcademicYear } from '../../services/academicYearService';
 import schoolSettingsService, { SchoolSettings } from '../../services/schoolSettingsService';
+import logoImg from '../../assets/logo.jpg';
 
 const DEFAULT_LEVELS: LevelConfig[] = [
   { level_name: 'Formative Tests (F I+F II+F III+F IV)', exam_type_ids: [], weightage_pct: 25 },
@@ -669,7 +670,7 @@ interface StudentReportCardProps {
 
 const StudentReportCard: React.FC<StudentReportCardProps> = ({ student, academicYear, gradeScale, remarks, onRemarksChange, schoolSettings }) => {
   const logoUrl = schoolSettings ? schoolSettingsService.getLogoUrl(schoolSettings) : null;
-  const schoolName = schoolSettings?.school_name || 'KRISHNAVENI TALENT HIGH SCHOOL';
+  const schoolName = schoolSettings?.school_name || 'SRI SAI PRASANTHI VIDYANIKETAN';
   const schoolAddress = schoolSettings?.address || 'Dwaraka Nagar, Bandlaguda Jagir, Gandipet Mandal, R.R.Dist., Hyderabad.';
   const affiliation = schoolSettings?.affiliation || 'Recognised by the Govt. of Telangana';
   return (
@@ -678,16 +679,7 @@ const StudentReportCard: React.FC<StudentReportCardProps> = ({ student, academic
       <div style={{ background: '#fefce8', borderBottom: '3px solid #1e3a5f', padding: '8px 20px' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            {logoUrl ? (
-              <img src={logoUrl} alt="School Logo" style={{ height: '48px', width: '48px', objectFit: 'contain', flexShrink: 0 }} />
-            ) : (
-              <div style={{ height: '48px', width: '48px', borderRadius: '50%', border: '3px solid #1e3a5f', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f4ff', flexShrink: 0 }}>
-                <svg width="30" height="30" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 3L4 11V25C4 34 22 42 22 42C22 42 40 34 40 25V11L22 3Z" fill="#1e3a5f" />
-                  <text x="22" y="27" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="serif">KTB</text>
-                </svg>
-              </div>
-            )}
+            <img src={logoUrl || logoImg} alt="School Logo" style={{ height: '48px', width: '48px', objectFit: 'contain', flexShrink: 0 }} />
             <span style={{ fontSize: '22px', fontWeight: '900', color: '#1e3a5f', letterSpacing: '2px', fontFamily: 'Georgia, serif', lineHeight: '1' }}>{schoolName.replace(/HIGH SCHOOL/i, '').trim()}</span>
             <div style={{ color: '#dc2626', padding: '2px 8px', fontSize: '14px', fontWeight: '900', lineHeight: '1.2', textAlign: 'center', letterSpacing: '1px', fontFamily: 'Georgia, serif' }}>
               <div>HIGH</div>
@@ -1014,7 +1006,7 @@ interface ScholasticBackPageProps {
 
 const ScholasticBackPage: React.FC<ScholasticBackPageProps> = ({ student, categories, terms, academicYear, className, sectionName, schoolSettings }) => {
   const logoUrl = schoolSettings ? schoolSettingsService.getLogoUrl(schoolSettings) : null;
-  const schoolName = schoolSettings?.school_name || 'KRISHNAVENI TALENT HIGH SCHOOL';
+  const schoolName = schoolSettings?.school_name || 'SRI SAI PRASANTHI VIDYANIKETAN';
   const schoolAddress = schoolSettings?.address || 'Dwaraka Nagar, Bandlaguda Jagir, Gandipet Mandal, R.R.Dist., Hyderabad.';
   const affiliation = schoolSettings?.affiliation || 'Recognised by the Govt. of Telangana';
   return (
@@ -1023,16 +1015,7 @@ const ScholasticBackPage: React.FC<ScholasticBackPageProps> = ({ student, catego
       <div style={{ background: '#fefce8', borderBottom: '3px solid #1e3a5f', padding: '12px 20px' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            {logoUrl ? (
-              <img src={logoUrl} alt="School Logo" style={{ height: '64px', width: '64px', objectFit: 'contain', flexShrink: 0 }} />
-            ) : (
-              <div style={{ height: '64px', width: '64px', borderRadius: '50%', border: '3px solid #1e3a5f', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f4ff', flexShrink: 0 }}>
-                <svg width="40" height="40" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 3L4 11V25C4 34 22 42 22 42C22 42 40 34 40 25V11L22 3Z" fill="#1e3a5f" />
-                  <text x="22" y="27" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="serif">KTB</text>
-                </svg>
-              </div>
-            )}
+            <img src={logoUrl || logoImg} alt="School Logo" style={{ height: '64px', width: '64px', objectFit: 'contain', flexShrink: 0 }} />
             <span style={{ fontSize: '26px', fontWeight: '900', color: '#1e3a5f', letterSpacing: '2px', fontFamily: 'Georgia, serif', lineHeight: '1' }}>{schoolName.replace(/HIGH SCHOOL/i, '').trim()}</span>
             <div style={{ background: '#b91c1c', color: 'white', padding: '3px 10px', borderRadius: '3px', fontSize: '13px', fontWeight: '900', lineHeight: '1.3', textAlign: 'center', letterSpacing: '1px' }}>
               <div>HIGH</div>

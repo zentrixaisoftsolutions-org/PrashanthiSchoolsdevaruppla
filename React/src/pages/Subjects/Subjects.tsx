@@ -162,6 +162,22 @@ const Subjects: React.FC = () => {
     return selectedCount > 0 && selectedCount < classSectionsForClass.length;
   };
 
+  const isAllClassesSelected = (): boolean =>
+    classSections.length > 0 && classSections.every(cs => selectedClassSections.includes(cs.id));
+
+  const isAllClassesPartiallySelected = (): boolean => {
+    const count = classSections.filter(cs => selectedClassSections.includes(cs.id)).length;
+    return count > 0 && count < classSections.length;
+  };
+
+  const toggleAllClasses = () => {
+    if (isAllClassesSelected()) {
+      setSelectedClassSections([]);
+    } else {
+      setSelectedClassSections(classSections.map(cs => cs.id));
+    }
+  };
+
   // Toggle all sections of a class
   const toggleClass = (className: string) => {
     const classSectionsForClass = classSections.filter(cs => cs.class_name === className);
@@ -422,6 +438,25 @@ const Subjects: React.FC = () => {
                       Select Class
                     </label>
                     <div className="border border-gray-200 rounded p-4 max-h-80 overflow-y-auto">
+                      {/* Select All Classes */}
+                      {classSections.length > 0 && (
+                        <div className="mb-3 pb-2 border-b border-gray-200">
+                          <label className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={isAllClassesSelected()}
+                              ref={(el) => {
+                                if (el) el.indeterminate = isAllClassesPartiallySelected();
+                              }}
+                              onChange={toggleAllClasses}
+                              className="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                            />
+                            <span className="ml-2 text-sm font-semibold text-indigo-700">
+                              Select All Classes
+                            </span>
+                          </label>
+                        </div>
+                      )}
                       {getGroupedClasses().map((classGroup) => (
                         <div key={classGroup.class_name} className="mb-4">
                           {/* Class Checkbox */}

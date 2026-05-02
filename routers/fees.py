@@ -48,7 +48,7 @@ async def list_fee_structures(
         query = query.filter(FeeStructure.academic_year_id == academic_year_id)
     if class_name_id:
         query = query.filter(FeeStructure.class_name_id == class_name_id)
-    if term:
+    if term is not None:
         query = query.filter(FeeStructure.term == term)
 
     structures = query.order_by(FeeStructure.class_name_id, FeeStructure.term, FeeStructure.fee_type).all()

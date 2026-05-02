@@ -50,7 +50,7 @@ const Login: React.FC = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-4">
               <span className="text-3xl">🎓</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Student Management System</h1>
+            <h1 className="text-2xl font-bold text-gray-900">SRI SAI PRASANTHI VIDYANIKETAN</h1>
             <p className="text-gray-500 mt-2">Sign in to your account</p>
           </div>
 
@@ -118,7 +118,7 @@ const Login: React.FC = () => {
           {/* Role Info */}
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-400 text-center">
-              KRISHNAVENI - School Management System
+              SRI SAI PRASANTHI VIDYANIKETAN
             </p>
           </div>
         </div>

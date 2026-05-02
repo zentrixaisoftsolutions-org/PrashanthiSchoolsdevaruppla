@@ -584,9 +584,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Chat Widget - only show if user has access */}
       {(menuAccess === null || menuAccess.includes('/chat')) && <ChatWidget />}
 
-      {/* Powered by Venzora watermark */}
-      <div className="fixed top-2 right-3 z-[9999] pointer-events-none opacity-80">
-        <img src="/vengorasoft-logo.png" alt="Venzora" className="w-44 object-contain" />
+      {/* Powered by Zentrix watermark */}
+      <div className="fixed top-2 right-3 z-[9999] pointer-events-none opacity-70">
+        <span className="text-[10px] font-semibold text-gray-400 tracking-widest">POWERED BY ZENTRIXAISOFTSOLUTIONS</span>
       </div>
 
       {/* Custom scrollbar styles */}

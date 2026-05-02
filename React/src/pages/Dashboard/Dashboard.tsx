@@ -143,7 +143,7 @@ const Dashboard = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome to <span className="text-indigo-600">KRISHNAVENI</span> School Management
+            Welcome to <span className="text-indigo-600">SRI SAI PRASANTHI VIDYANIKETAN</span>
           </h1>
           <p className="text-gray-500 mt-1 text-sm">
             {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}

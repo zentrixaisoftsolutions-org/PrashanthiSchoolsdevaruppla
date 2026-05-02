@@ -5,6 +5,7 @@ import classNameService, { ClassName } from '../../services/classNameService';
 
 interface FeeRow {
   fee_type: string;
+  annual: FeeStructure | null;
   term1: FeeStructure | null;
   term2: FeeStructure | null;
   term3: FeeStructure | null;
@@ -30,7 +31,7 @@ const FeeStructurePage: React.FC = () => {
     class_name_id: 0,
     fee_type: '',
     amount: '',
-    term: 1,
+    term: 0,
   });
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const FeeStructurePage: React.FC = () => {
       class_name_id: s.class_name_id,
       fee_type: s.fee_type,
       amount: String(s.amount),
-      term: s.term || 1,
+      term: s.term ?? 0,
     });
     setShowForm(true);
   };
@@ -131,7 +132,7 @@ const FeeStructurePage: React.FC = () => {
       class_name_id: 0,
       fee_type: '',
       amount: '',
-      term: 1,
+      term: 0,
     });
   };
 
@@ -150,18 +151,20 @@ const FeeStructurePage: React.FC = () => {
     const feeMap: Record<string, FeeRow> = {};
     for (const s of items) {
       if (!feeMap[s.fee_type]) {
-        feeMap[s.fee_type] = { fee_type: s.fee_type, term1: null, term2: null, term3: null };
+        feeMap[s.fee_type] = { fee_type: s.fee_type, annual: null, term1: null, term2: null, term3: null };
       }
-      if (s.term === 1) feeMap[s.fee_type].term1 = s;
+      if (s.term === 0) feeMap[s.fee_type].annual = s;
+      else if (s.term === 1) feeMap[s.fee_type].term1 = s;
       else if (s.term === 2) feeMap[s.fee_type].term2 = s;
       else if (s.term === 3) feeMap[s.fee_type].term3 = s;
     }
     const rows = Object.values(feeMap);
+    const totalAnnual = rows.reduce((sum, r) => sum + (r.annual?.amount || 0), 0);
     const totalT1 = rows.reduce((sum, r) => sum + (r.term1?.amount || 0), 0);
     const totalT2 = rows.reduce((sum, r) => sum + (r.term2?.amount || 0), 0);
     const totalT3 = rows.reduce((sum, r) => sum + (r.term3?.amount || 0), 0);
-    const grandTotal = totalT1 + totalT2 + totalT3;
-    return { className, rows, totalT1, totalT2, totalT3, grandTotal };
+    const grandTotal = totalAnnual + totalT1 + totalT2 + totalT3;
+    return { className, rows, totalAnnual, totalT1, totalT2, totalT3, grandTotal };
   });
 
   if (loading) {
@@ -276,12 +279,13 @@ const FeeStructurePage: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Term</label>
+                  <label className="block text-sm text-gray-600 mb-1">Payment Period</label>
                   <select
                     value={formData.term}
                     onChange={e => setFormData(p => ({ ...p, term: parseInt(e.target.value) }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
                   >
+                    <option value={0}>Annual (Full Year)</option>
                     <option value={1}>Term 1</option>
                     <option value={2}>Term 2</option>
                     <option value={3}>Term 3</option>
@@ -319,7 +323,7 @@ const FeeStructurePage: React.FC = () => {
           No fee structures found. Click "Add Fee Component" to create one.
         </div>
       ) : (
-        classTables.map(({ className, rows, totalT1, totalT2, totalT3, grandTotal }) => (
+        classTables.map(({ className, rows, totalAnnual, totalT1, totalT2, totalT3, grandTotal }) => (
           <div key={className} className="bg-white rounded-lg shadow mb-4">
             <div className="bg-indigo-50 px-4 py-3 border-b flex justify-between items-center rounded-t-lg">
               <h3 className="text-sm font-semibold text-indigo-700">{className}</h3>
@@ -330,6 +334,7 @@ const FeeStructurePage: React.FC = () => {
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs text-gray-500 uppercase tracking-wider">
                     <th className="px-4 py-3">Fee Type</th>
+                    <th className="px-4 py-3 text-right bg-amber-50 text-amber-700">Annual</th>
                     <th className="px-4 py-3 text-right">Term 1</th>
                     <th className="px-4 py-3 text-right">Term 2</th>
                     <th className="px-4 py-3 text-right">Term 3</th>
@@ -339,10 +344,14 @@ const FeeStructurePage: React.FC = () => {
                 </thead>
                 <tbody>
                   {rows.map((row, i) => {
-                    const rowTotal = (row.term1?.amount || 0) + (row.term2?.amount || 0) + (row.term3?.amount || 0);
+                    const rowTotal = (row.annual?.amount || 0) + (row.term1?.amount || 0) + (row.term2?.amount || 0) + (row.term3?.amount || 0);
+                    const termLabel = (s: FeeStructure) => s.term === 0 ? 'Ann' : `T${s.term}`;
                     return (
                       <tr key={row.fee_type} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                         <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.fee_type}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-amber-700 bg-amber-50/40">
+                          {row.annual ? formatCurrency(row.annual.amount) : <span className="text-gray-300">—</span>}
+                        </td>
                         <td className="px-4 py-3 text-sm text-right font-semibold text-gray-700">
                           {row.term1 ? formatCurrency(row.term1.amount) : <span className="text-gray-300">—</span>}
                         </td>
@@ -356,12 +365,12 @@ const FeeStructurePage: React.FC = () => {
                           {formatCurrency(rowTotal)}
                         </td>
                         <td className="px-4 py-3 text-center whitespace-nowrap">
-                          {[row.term1, row.term2, row.term3].filter(Boolean).map(s => (
+                          {[row.annual, row.term1, row.term2, row.term3].filter(Boolean).map(s => (
                             <span key={s!.id} className="inline-flex items-center mr-1">
-                              <button onClick={() => handleEdit(s!)} className="text-indigo-600 hover:text-indigo-800 text-xs mr-1" title={`Edit Term ${s!.term}`}>
-                                T{s!.term}✏️
+                              <button onClick={() => handleEdit(s!)} className="text-indigo-600 hover:text-indigo-800 text-xs mr-1" title={`Edit ${s!.term === 0 ? 'Annual' : 'Term ' + s!.term}`}>
+                                {termLabel(s!)}✏️
                               </button>
-                              <button onClick={() => handleDelete(s!.id)} className="text-red-500 hover:text-red-700 text-xs mr-2" title={`Delete Term ${s!.term}`}>
+                              <button onClick={() => handleDelete(s!.id)} className="text-red-500 hover:text-red-700 text-xs mr-2" title={`Delete ${s!.term === 0 ? 'Annual' : 'Term ' + s!.term}`}>
                                 ✕
                               </button>
                             </span>
@@ -374,6 +383,7 @@ const FeeStructurePage: React.FC = () => {
                 <tfoot>
                   <tr className="bg-indigo-50 font-bold text-sm">
                     <td className="px-4 py-3 text-indigo-700">Total</td>
+                    <td className="px-4 py-3 text-right text-amber-700 bg-amber-50/60">{formatCurrency(totalAnnual)}</td>
                     <td className="px-4 py-3 text-right text-indigo-700">{formatCurrency(totalT1)}</td>
                     <td className="px-4 py-3 text-right text-indigo-700">{formatCurrency(totalT2)}</td>
                     <td className="px-4 py-3 text-right text-indigo-700">{formatCurrency(totalT3)}</td>
