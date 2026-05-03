@@ -4,6 +4,13 @@
 * text=auto
 
 ###############################################################################
+# Force LF for files that run on Linux servers — bash and the Python deployment
+# entrypoints break with \r in CRLF endings on the deploy target.
+###############################################################################
+*.sh   text eol=lf
+*.py   text eol=lf
+
+###############################################################################
 # Set default behavior for command prompt diff.
 #
 # This is need for earlier builds of msysgit that does not have it on by
