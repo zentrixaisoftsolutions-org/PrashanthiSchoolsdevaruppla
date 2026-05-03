@@ -16,3 +16,4 @@ Pillow==10.2.0  # Image processing for photo thumbnails
 numpy==1.26.4  # Fast numerical operations
 pandas==2.2.0  # Data analysis and aggregations
 pyzk>=0.9      # ZKTeco device protocol
+requests==2.32.3  # HTTP client used by services/easytimepro.py
