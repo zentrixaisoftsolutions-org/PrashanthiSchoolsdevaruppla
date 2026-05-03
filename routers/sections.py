@@ -36,7 +36,7 @@ async def list_sections(
     db: Session = Depends(get_db)
 ):
     """Get list of all sections."""
-    query = db.query(Section)
+    query = db.query(Section).filter(Section.name != '')
     if not include_inactive:
         query = query.filter(Section.is_active == True)
     sections = query.order_by(Section.display_order, Section.name).all()

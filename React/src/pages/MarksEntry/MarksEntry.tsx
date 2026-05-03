@@ -68,6 +68,13 @@ const MarksEntry: React.FC = () => {
     }
   }, [selectedClassNameId]);
 
+  // Auto-select section when class has only one no-section entry
+  useEffect(() => {
+    if (sections.length === 1 && sections[0].section_name === '') {
+      setSelectedSectionId(sections[0].id);
+    }
+  }, [sections]);
+
   // Fetch exams when academic year changes
   useEffect(() => {
     if (selectedAcademicYearId) {
@@ -405,21 +412,23 @@ const MarksEntry: React.FC = () => {
               </select>
             </div>
 
-            {/* Section Name */}
-            <div>
-              <label className="block text-sm text-gray-600 mb-1">Section Name</label>
-              <select
-                value={selectedSectionId || ''}
-                onChange={(e) => setSelectedSectionId(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
-                disabled={!selectedClassNameId}
-              >
-                <option value="">-- Select Section --</option>
-                {sections.map(section => (
-                  <option key={section.id} value={section.id}>{section.section_name}</option>
-                ))}
-              </select>
-            </div>
+            {/* Section Name — hidden when class has no sections */}
+            {!(sections.length === 1 && sections[0].section_name === '') && (
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Section Name</label>
+                <select
+                  value={selectedSectionId || ''}
+                  onChange={(e) => setSelectedSectionId(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
+                  disabled={!selectedClassNameId}
+                >
+                  <option value="">-- Select Section --</option>
+                  {sections.map(section => (
+                    <option key={section.id} value={section.id}>{section.section_name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Buttons */}

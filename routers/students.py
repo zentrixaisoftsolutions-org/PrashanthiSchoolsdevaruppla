@@ -182,7 +182,7 @@ async def list_students(
     total = query.count()
     
     # Apply ordering (required for SQL Server with OFFSET)
-    query = query.order_by(Student.id)
+    query = query.order_by(Student.first_name, Student.surname)
     
     # Apply pagination
     offset = (page - 1) * page_size
@@ -437,7 +437,77 @@ async def import_students_csv(
         
         # Cache for class lookups to reduce DB queries
         class_cache = {}  # (class_name, section_name) -> Class.id
-        
+
+        # ── Class name normaliser ─────────────────────────────────────────────
+        _ROMAN_TO_NUM = {
+            'X': 10, 'IX': 9, 'VIII': 8, 'VII': 7, 'VI': 6,
+            'V': 5,  'IV': 4, 'III': 3, 'II': 2,  'I': 1,
+        }
+        _WORD_TO_NUM = {
+            'TEN': 10, 'NINE': 9, 'EIGHT': 8, 'SEVEN': 7, 'SIX': 6,
+            'FIVE': 5, 'FOUR': 4, 'THREE': 3, 'TWO': 2,  'ONE': 1,
+        }
+
+        def normalize_class_name(raw: str) -> str:
+            """Convert any common class name format to the system format (e.g. '1 CLASS')."""
+            s = raw.strip().upper()
+            # Already in system format
+            if s.endswith(' CLASS'):
+                return s
+            # "LKG" / "LOWER KG" → "LKG CLASS"
+            if s in ('LKG', 'LOWER KG', 'LKG CLASS', 'JKG', 'JKG CLASS'):
+                return 'LKG CLASS'
+            # "NUR" / "NURSERY" → "NUR CLASS"
+            if s in ('NUR', 'NURSERY', 'NURSERY CLASS'):
+                return 'NUR CLASS'
+            # "SKG" / "UKG" → "SKG CLASS"
+            if s in ('SKG', 'UKG', 'UPPER KG', 'SR KG', 'SENIOR KG', 'SKG CLASS'):
+                return 'SKG CLASS'
+            # "GRADE 1", "CLASS 1", "STD 1", "STANDARD 1" → "1 CLASS"
+            for prefix in ('GRADE ', 'CLASS ', 'STD ', 'STANDARD '):
+                if s.startswith(prefix):
+                    rest = s[len(prefix):].strip()
+                    # rest may be digit, roman, or word
+                    if rest.isdigit():
+                        return f"{rest} CLASS"
+                    if rest in _ROMAN_TO_NUM:
+                        return f"{_ROMAN_TO_NUM[rest]} CLASS"
+                    if rest in _WORD_TO_NUM:
+                        return f"{_WORD_TO_NUM[rest]} CLASS"
+            # Pure digit "1" .. "10"
+            if s.isdigit():
+                return f"{s} CLASS"
+            # Pure roman numeral
+            if s in _ROMAN_TO_NUM:
+                return f"{_ROMAN_TO_NUM[s]} CLASS"
+            # Admission-number prefix → class  e.g. "SSPVI-A" → "1 CLASS"
+            # Pattern: SSPV + roman + "-" + section  OR  SSPV + roman (no section)
+            import re
+            m = re.match(r'^SSPV(X|IX|VIII|VII|VI|V|IV|III|II|I)(?:-[A-Z])?$', s)
+            if m:
+                return f"{_ROMAN_TO_NUM[m.group(1)]} CLASS"
+            # Return as-is if we can't normalise
+            return raw.strip()
+
+        def derive_class_section_from_admission(admission_no: str):
+            """
+            Extract class and section from admission number prefix.
+            SSPVI-A001  → ('1 CLASS', 'A')
+            SSPVII-B010 → ('2 CLASS', 'B')
+            Returns (None, None) if pattern doesn't match.
+            """
+            import re
+            m = re.match(
+                r'^SSPV(X|IX|VIII|VII|VI|V|IV|III|II|I)-([A-Z])',
+                admission_no.strip().upper()
+            )
+            if m:
+                class_num = _ROMAN_TO_NUM[m.group(1)]
+                section = m.group(2)
+                return f"{class_num} CLASS", section
+            return None, None
+        # ─────────────────────────────────────────────────────────────────────
+
         for row_num, row in enumerate(rows, start=2):  # Start at 2 (header is row 1)
             try:
                 # Map CSV columns to model fields
@@ -452,14 +522,24 @@ async def import_students_csv(
                     skipped_count += 1
                     continue  # Skip silently for existing students
                 
-                # Get class and section from CSV
-                class_name_str = row.get('* Class Name', '').strip()
-                section_name_str = row.get('* Section Name', '').strip()
+                # Get class and section from CSV — normalise to system format
+                class_name_str = normalize_class_name(row.get('* Class Name', '').strip())
+                section_name_str = row.get('* Section Name', '').strip().upper()
+
+                # Fallback: derive from admission number prefix if columns are empty
+                if not class_name_str or not section_name_str:
+                    derived_class, derived_section = derive_class_section_from_admission(admission_no)
+                    if not class_name_str and derived_class:
+                        class_name_str = derived_class
+                    if not section_name_str and derived_section:
+                        section_name_str = derived_section
+
                 class_id = None
-                
-                if class_name_str and section_name_str:
+
+                if class_name_str:
+                    # section_name_str may be '' for classes 5-10 (no section)
                     cache_key = (class_name_str, section_name_str)
-                    
+
                     if cache_key in class_cache:
                         class_id = class_cache[cache_key]
                     else:
@@ -470,15 +550,16 @@ async def import_students_csv(
                             db.add(class_name_record)
                             db.flush()
                             created_classes.append(class_name_str)
-                        
-                        # Step 2: Ensure Section exists in master data
+
+                        # Step 2: Ensure Section exists in master data ('' = no section)
                         section_record = db.query(Section).filter(Section.name == section_name_str).first()
                         if not section_record:
                             section_record = Section(name=section_name_str, is_active=True)
                             db.add(section_record)
                             db.flush()
-                            created_sections.append(section_name_str)
-                        
+                            if section_name_str:
+                                created_sections.append(section_name_str)
+
                         # Step 3: Ensure ClassSection mapping exists
                         class_section_mapping = db.query(ClassSection).filter(
                             ClassSection.class_name_id == class_name_record.id,
@@ -492,23 +573,24 @@ async def import_students_csv(
                             )
                             db.add(class_section_mapping)
                             db.flush()
-                        
+
                         # Step 4: Ensure Class (enrollment class) exists
                         class_obj = db.query(Class).filter(
                             Class.class_name == class_name_str,
                             Class.section_name == section_name_str
                         ).first()
-                        
+
                         if not class_obj:
+                            display_name = f"{class_name_str} - {section_name_str}" if section_name_str else class_name_str
                             class_obj = Class(
-                                name=f"{class_name_str} - {section_name_str}",
-                                class_name=class_name_str, 
-                                section_name=section_name_str, 
+                                name=display_name,
+                                class_name=class_name_str,
+                                section_name=section_name_str,
                                 is_active=True
                             )
                             db.add(class_obj)
                             db.flush()
-                        
+
                         class_id = class_obj.id
                         class_cache[cache_key] = class_id
                 

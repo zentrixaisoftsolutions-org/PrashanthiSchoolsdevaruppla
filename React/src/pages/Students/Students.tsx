@@ -52,6 +52,7 @@ const Students: React.FC = () => {
     page_size: 20,
   });
   const [searchOptions, setSearchOptions] = useState<SearchOptions>({ class_names: [], sections: [] });
+  const [allClassSections, setAllClassSections] = useState<{class_name: string; section_name: string}[]>([]);
   const [classes, setClasses] = useState<ClassInfo[]>([]);
   const [showFilters, setShowFilters] = useState(true);
   
@@ -129,7 +130,8 @@ const Students: React.FC = () => {
       const classSections = await classSectionService.listClassSections();
       // Extract unique class names and sections
       const classNames = [...new Set(classSections.map(cs => cs.class_name))];
-      const sections = [...new Set(classSections.map(cs => cs.section_name))];
+      const sections = [...new Set(classSections.map(cs => cs.section_name).filter(s => s !== ''))];
+      setAllClassSections(classSections.map(cs => ({ class_name: cs.class_name, section_name: cs.section_name })));
       setSearchOptions({ class_names: classNames, sections: sections });
     } catch (err) {
       console.error('Failed to load search options:', err);
@@ -660,7 +662,7 @@ const Students: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Class Name</label>
                 <select
                   value={searchClassName}
-                  onChange={(e) => setSearchClassName(e.target.value)}
+                  onChange={(e) => { setSearchClassName(e.target.value); setSearchSection(''); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 >
                   <option value="">All Classes</option>
@@ -669,19 +671,26 @@ const Students: React.FC = () => {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
-                <select
-                  value={searchSection}
-                  onChange={(e) => setSearchSection(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                >
-                  <option value="">All Sections</option>
-                  {searchOptions.sections.map((section) => (
-                    <option key={section} value={section}>{section}</option>
-                  ))}
-                </select>
-              </div>
+              {(() => {
+                const sectionsForClass = searchClassName
+                  ? allClassSections.filter(cs => cs.class_name === searchClassName && cs.section_name !== '').map(cs => cs.section_name)
+                  : searchOptions.sections;
+                return sectionsForClass.length > 0 ? (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+                    <select
+                      value={searchSection}
+                      onChange={(e) => setSearchSection(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                    >
+                      <option value="">All Sections</option>
+                      {sectionsForClass.map((section) => (
+                        <option key={section} value={section}>{section}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : null;
+              })()}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">General Search</label>
                 <input

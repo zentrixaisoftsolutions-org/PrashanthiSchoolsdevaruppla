@@ -412,7 +412,9 @@ const MapExams: React.FC = () => {
     return Object.entries(grouped).map(([className, sections], idx) => (
       <div key={idx}>
         <span className="text-indigo-600">{className}</span>{' '}
-        <span className="text-orange-500">{sections.join(' ')}</span>
+        {sections.filter(s => s !== '').length > 0 && (
+          <span className="text-orange-500">{sections.filter(s => s !== '').join(' ')}</span>
+        )}
       </div>
     ));
   };
@@ -770,22 +772,24 @@ const MapExams: React.FC = () => {
                             </span>
                           </label>
                           
-                          {/* Section Checkboxes (indented) */}
-                          <div className="ml-6 space-y-2">
-                            {classGroup.sections.map((section) => (
-                              <label key={section.id} className="flex items-center cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedClassSections.includes(section.id)}
-                                  onChange={() => toggleSection(section.id)}
-                                  className="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
-                                />
-                                <span className="ml-2 text-sm text-orange-500">
-                                  {section.section_name}
-                                </span>
-                              </label>
-                            ))}
-                          </div>
+                          {/* Section Checkboxes (indented) — hidden for single no-section classes */}
+                          {!(classGroup.sections.length === 1 && classGroup.sections[0].section_name === '') && (
+                            <div className="ml-6 space-y-2">
+                              {classGroup.sections.map((section) => (
+                                <label key={section.id} className="flex items-center cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedClassSections.includes(section.id)}
+                                    onChange={() => toggleSection(section.id)}
+                                    className="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                  />
+                                  <span className="ml-2 text-sm text-orange-500">
+                                    {section.section_name}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ))}
                       {getGroupedClasses().length === 0 && (

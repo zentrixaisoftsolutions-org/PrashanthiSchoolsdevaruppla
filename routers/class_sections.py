@@ -198,6 +198,7 @@ async def list_classes_with_sections(
                 updated_at=m.section.updated_at
             )
             for m in mappings
+            if m.section.name != ''
         ]
         
         results.append(ClassWithSectionsResponse(
