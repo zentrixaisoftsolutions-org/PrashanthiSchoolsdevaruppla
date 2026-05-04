@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import logoImg from '../../assets/logo.jpg';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -42,23 +43,23 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2D2A6E] via-[#3D3B8E] to-[#5553A0]">
       <div className="max-w-md w-full mx-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           {/* Logo / Title */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-4">
-              <span className="text-3xl">🎓</span>
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl mb-4 shadow-lg overflow-hidden bg-white border-2 border-gray-100">
+              <img src={logoImg} alt="School Logo" className="w-full h-full object-contain p-1" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">SRI SAI PRASANTHI VIDYANIKETAN</h1>
-            <p className="text-gray-500 mt-2">Sign in to your account</p>
+            <h1 className="text-xl font-extrabold tracking-wide" style={{ color: '#3D3B8E' }}>SRI SAI PRASANTHI VIDYANIKETAN</h1>
+            <p className="text-gray-400 text-sm mt-1 tracking-widest uppercase font-medium">School Management System</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+            <div className="bg-red-50 border-l-4 border-[#E84040] p-4 mb-6 rounded">
               <div className="flex items-center">
-                <span className="text-red-500 mr-2">⚠️</span>
+                <span className="text-[#E84040] mr-2">⚠️</span>
                 <p className="text-red-700 text-sm">{error}</p>
               </div>
             </div>
@@ -76,7 +77,7 @@ const Login: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F5A623] focus:border-transparent outline-none transition duration-200"
                 placeholder="Enter your email"
               />
             </div>
@@ -91,7 +92,7 @@ const Login: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F5A623] focus:border-transparent outline-none transition duration-200"
                 placeholder="Enter your password"
               />
             </div>
@@ -99,7 +100,10 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ background: loading ? '#E8890C' : 'linear-gradient(135deg, #F5A623, #E8890C)' }}
+              onMouseEnter={(e) => { if (!loading) (e.currentTarget as HTMLButtonElement).style.background = '#E8890C'; }}
+              onMouseLeave={(e) => { if (!loading) (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(135deg, #F5A623, #E8890C)'; }}
             >
               {loading ? (
                 <span className="flex items-center justify-center">

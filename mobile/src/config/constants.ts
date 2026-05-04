@@ -3,13 +3,13 @@
 
 // Development URL - Update with your local IP address
 // For Android Emulator, use http://10.0.2.2:8000
-const DEV_API_URL = 'http://178.156.251.34:8000';
+const DEV_API_URL = 'http://192.168.1.2:8000';
 
 // Production URL - Update with your production server URL
-const PROD_API_URL = 'http://178.156.251.34:8000';
+const PROD_API_URL = 'http://192.168.1.2:8000';
 
 // Staging URL (optional)
-const STAGING_API_URL = 'http://178.156.251.34:8000';
+const STAGING_API_URL = 'http://192.168.1.2:8000';
 
 // Environment detection
 // You can override by setting process.env.REACT_APP_ENV to 'development', 'staging', or 'production'

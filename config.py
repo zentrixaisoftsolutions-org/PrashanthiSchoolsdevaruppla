@@ -8,20 +8,25 @@ class Settings(BaseSettings):
     # Database Configuration - SQL Server
     # Format: mssql+pyodbc://username:password@server/database?driver=driver_name
     DB_SERVER: str = "."
-    DB_NAME: str = "SchoolERP"
-    DB_USER: str = "erp_user"
-    DB_PASSWORD: str = "p@ssw0rd123!"
+    DB_NAME: str = "prashanthiSchools"
+    DB_USER: str = "prashanthiSchools_user"
+    DB_PASSWORD: str = "StrongPass@123"
     DB_DRIVER: str = "ODBC Driver 17 for SQL Server"
     
+    DB_TRUSTED_CONNECTION: bool = False
+
     @property
     def DATABASE_URL(self) -> str:
-        # Use DSN-less connection string with full parameters
-        # This avoids URL encoding issues with driver names
-        encoded_user = quote(self.DB_USER, safe='')
-        encoded_password = quote(self.DB_PASSWORD, safe='')
-        encoded_driver = quote(self.DB_DRIVER, safe='ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz0123456789-_')
-        # Format: mssql+pyodbc:///?odbc_connect=DRIVER={...};SERVER=...;DATABASE=...;UID=...;PWD=...
-        odbc_connect = f"DRIVER={{{self.DB_DRIVER}}};SERVER={self.DB_SERVER};DATABASE={self.DB_NAME};UID={self.DB_USER};PWD={self.DB_PASSWORD}"
+        if self.DB_TRUSTED_CONNECTION:
+            odbc_connect = (
+                f"DRIVER={{{self.DB_DRIVER}}};SERVER={self.DB_SERVER};"
+                f"DATABASE={self.DB_NAME};Trusted_Connection=yes;"
+            )
+        else:
+            odbc_connect = (
+                f"DRIVER={{{self.DB_DRIVER}}};SERVER={self.DB_SERVER};"
+                f"DATABASE={self.DB_NAME};UID={self.DB_USER};PWD={self.DB_PASSWORD}"
+            )
         return f"mssql+pyodbc:///?odbc_connect={quote(odbc_connect, safe='')}"
     
     # JWT Configuration
@@ -47,7 +52,7 @@ class Settings(BaseSettings):
     SMTP_USER: str = "ram.sirapurapu@gmail.com"
     SMTP_PASSWORD: str = "agqn dkob humu srfv"
     SMTP_FROM_EMAIL: str = "ram.sirapurapu@gmail.com"
-    HELPDESK_RECIPIENT_EMAIL: str = "santosh.murarkar@gmail.com"
+    HELPDESK_RECIPIENT_EMAIL: str = "ramakrishnasirapurapu55@gmail.com"
 
     class Config:
         env_file = ".env"

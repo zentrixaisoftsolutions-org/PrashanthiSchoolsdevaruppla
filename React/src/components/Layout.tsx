@@ -270,7 +270,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div className="flex h-screen bg-[#F0F2F8] dark:bg-gray-900 transition-colors duration-300">
       {/* Mobile backdrop */}
       {sidebarOpen && (
         <div
@@ -286,16 +286,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         onMouseLeave={() => setSidebarHover(false)}
         className={`
           fixed lg:relative z-30 h-full flex flex-col
-          bg-gradient-to-b from-[#1a1a2e] to-[#16213e]
+          bg-gradient-to-b from-[#2D2A6E] to-[#3D3B8E]
           text-[#c2c7d0] shadow-2xl
           transition-all duration-300 ease-in-out
           ${effectiveOpen ? 'w-[260px]' : 'w-[68px]'}
         `}
+        style={{
+          backgroundImage: effectiveOpen
+            ? 'linear-gradient(160deg, #2D2A6E 0%, #3D3B8E 60%, #5553A0 100%)'
+            : 'linear-gradient(160deg, #2D2A6E 0%, #3D3B8E 100%)',
+        }}
       >
         {/* Brand / Logo */}
         <div className="relative flex items-center h-[57px] px-3 border-b border-white/10">
+          {/* Orange accent line at top */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#F5A623] to-[#E8890C]" />
           <Link to="/dashboard" className="flex items-center gap-3 group w-full overflow-hidden">
-            <div className="relative flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
+            <div className="relative flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-[#F5A623] to-[#E8890C] flex items-center justify-center shadow-lg shadow-[#F5A623]/30 group-hover:shadow-[#F5A623]/50 transition-shadow">
               <img src={schoolLogoUrl || logoImg} alt="Logo" className="w-7 h-7 object-contain rounded" />
             </div>
             <div className={`flex flex-col transition-all duration-200 ${effectiveOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 w-0'}`}>
@@ -308,14 +315,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className={`border-b border-white/10 transition-all duration-300 overflow-hidden ${effectiveOpen ? 'py-3 px-3' : 'py-2 px-2'}`}>
           <div className="flex items-center gap-3">
             <div className="relative flex-shrink-0">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#F5A623] to-[#E8890C] flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-[#F5A623]/30">
                 {(user?.full_name || user?.email || 'U').charAt(0).toUpperCase()}
               </div>
-              <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#1a1a2e] ${getRoleColor()}`} />
+              <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#2D2A6E] ${getRoleColor()}`} />
             </div>
             <div className={`flex-1 min-w-0 transition-all duration-200 ${effectiveOpen ? 'opacity-100' : 'opacity-0 w-0'}`}>
               <p className="text-xs font-semibold text-white truncate">{user?.full_name || user?.email || 'User'}</p>
-              <p className="text-[10px] text-indigo-300 truncate">{getRoleName()}</p>
+              <p className="text-[10px] text-[#F5A623]/80 truncate">{getRoleName()}</p>
             </div>
           </div>
         </div>
@@ -324,13 +331,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {effectiveOpen && (
           <div className="px-3 py-2 border-b border-white/5">
             <div className="relative">
-              <FiSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs" />
+              <FiSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
               <input
                 type="text"
                 placeholder="Search menu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 text-xs text-white placeholder-gray-500 rounded-md pl-8 pr-3 py-2 border border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 focus:bg-white/10 outline-none transition-all"
+                className="w-full bg-[#2D2A6E]/60 text-xs text-white placeholder-gray-400 rounded-md pl-8 pr-3 py-2 border border-white/10 focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623]/50 focus:bg-[#2D2A6E]/80 outline-none transition-all"
+                style={{ boxShadow: 'none' }}
               />
             </div>
           </div>
@@ -339,7 +347,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Section header */}
         {effectiveOpen && (
           <div className="px-4 pt-3 pb-1">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.15em]">Navigation</span>
+            <span className="text-[10px] font-bold text-[#F5A623]/70 uppercase tracking-[0.15em]">Navigation</span>
           </div>
         )}
 
@@ -362,21 +370,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           w-full group flex items-center rounded-lg px-3 py-2.5 text-[13px] font-medium
                           transition-all duration-200 relative
                           ${active
-                            ? 'bg-white/10 text-white shadow-sm'
+                            ? 'bg-[#F5A623]/20 text-white shadow-sm'
                             : 'text-[#c2c7d0] hover:bg-white/5 hover:text-white'
                           }
                         `}
                       >
                         {/* Active indicator bar */}
                         {active && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-400 rounded-r-full" />
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#F5A623] rounded-r-full" />
                         )}
-                        <Icon className={`flex-shrink-0 text-base transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-gray-400 group-hover:text-indigo-400'}`} />
+                        {/* Collapsed active dot */}
+                        {!effectiveOpen && active && (
+                          <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#F5A623]" />
+                        )}
+                        <Icon className={`flex-shrink-0 text-base transition-colors duration-200 ${active ? 'text-[#F5A623]' : 'text-gray-400 group-hover:text-[#F5A623]'}`} />
                         <span className={`ml-3 flex-1 text-left whitespace-nowrap transition-all duration-200 ${effectiveOpen ? 'opacity-100' : 'opacity-0 w-0'}`}>
                           {item.label}
                         </span>
                         {effectiveOpen && item.badge && (
-                          <span className={`${item.badgeColor || 'bg-indigo-500'} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm mr-2`}>
+                          <span className={`${item.badgeColor || 'bg-[#F5A623]'} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm mr-2`}>
                             {item.badge}
                           </span>
                         )}
@@ -391,7 +403,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                           effectiveOpen && expanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}
                       >
-                        <ul className="pl-3 mt-0.5 space-y-0.5 border-l border-white/10 ml-5">
+                        <ul className="pl-3 mt-0.5 space-y-0.5 border-l border-[#F5A623]/20 ml-5">
                           {item.subItems
                             .map((subItem) => {
                               const SubIcon = subItem.icon;
@@ -404,17 +416,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                       group flex items-center gap-3 rounded-lg px-3 py-2 text-[12.5px]
                                       transition-all duration-200 relative
                                       ${subActive
-                                        ? 'bg-indigo-500/20 text-indigo-300 font-semibold'
+                                        ? 'bg-[#F5A623]/20 text-[#F5A623] font-semibold'
                                         : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'
                                       }
                                     `}
                                   >
                                     {/* Dot connector */}
-                                    <span className={`absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-colors ${subActive ? 'bg-indigo-400' : 'bg-gray-600 group-hover:bg-gray-400'}`} />
-                                    <SubIcon className={`flex-shrink-0 text-xs ${subActive ? 'text-indigo-400' : 'text-gray-500 group-hover:text-gray-300'}`} />
+                                    <span className={`absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-colors ${subActive ? 'bg-[#F5A623]' : 'bg-gray-600 group-hover:bg-gray-400'}`} />
+                                    <SubIcon className={`flex-shrink-0 text-xs ${subActive ? 'text-[#F5A623]' : 'text-gray-500 group-hover:text-gray-300'}`} />
                                     <span className="truncate">{subItem.label}</span>
                                     {subActive && (
-                                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#F5A623] animate-pulse" />
                                     )}
                                   </Link>
                                 </li>
@@ -431,15 +443,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         group flex items-center rounded-lg px-3 py-2.5 text-[13px] font-medium
                         transition-all duration-200 relative
                         ${active
-                          ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/10 text-white shadow-sm'
+                          ? 'bg-[#F5A623]/20 text-white shadow-sm'
                           : 'text-[#c2c7d0] hover:bg-white/5 hover:text-white'
                         }
                       `}
                     >
                       {active && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-400 rounded-r-full" />
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#F5A623] rounded-r-full" />
                       )}
-                      <Icon className={`flex-shrink-0 text-base transition-colors duration-200 ${active ? 'text-indigo-400' : 'text-gray-400 group-hover:text-indigo-400'}`} />
+                      {/* Collapsed active dot */}
+                      {!effectiveOpen && active && (
+                        <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#F5A623]" />
+                      )}
+                      <Icon className={`flex-shrink-0 text-base transition-colors duration-200 ${active ? 'text-[#F5A623]' : 'text-gray-400 group-hover:text-[#F5A623]'}`} />
                       <span className={`ml-3 whitespace-nowrap transition-all duration-200 ${effectiveOpen ? 'opacity-100' : 'opacity-0 w-0'}`}>
                         {item.label}
                       </span>
@@ -467,22 +483,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navbar - AdminLTE style */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 z-10 transition-colors duration-300">
+        {/* Top Navbar */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 transition-colors duration-300"
+          style={{ borderBottom: '1px solid #e5e7eb' }}
+        >
+          {/* Orange accent border on brand area */}
           <div className="flex items-center justify-between h-[57px] px-4">
             {/* Left side */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#3D3B8E] dark:hover:text-gray-200 transition-colors"
                 title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
               >
                 <FiMenu className="text-lg" />
               </button>
-              <div className="hidden md:flex items-center gap-2 ml-2">
+              <div className="hidden md:flex items-center gap-2 ml-2 pl-3 border-l-2 border-[#F5A623]">
                 <img src={schoolLogoUrl || logoImg} alt="Logo" className="h-9 w-9 object-contain rounded-lg shadow-sm" />
                 <div>
-                  <h2 className="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight">{schoolName.toUpperCase()}</h2>
+                  <h2 className="text-sm font-bold text-[#3D3B8E] dark:text-gray-100 leading-tight">{schoolName.toUpperCase()}</h2>
                   <p className="text-[10px] text-gray-400 dark:text-gray-500 font-medium tracking-wider">SCHOOL MANAGEMENT SYSTEM</p>
                 </div>
               </div>
@@ -493,7 +512,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Search toggle */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#3D3B8E] dark:hover:text-gray-200 transition-colors"
               >
                 <FiSearch className="text-lg" />
               </button>
@@ -501,7 +520,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Dark/Light mode toggle */}
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-yellow-400 transition-all duration-300"
+                className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#F5A623] dark:hover:text-yellow-400 transition-all duration-300"
                 title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               >
                 <div className="relative w-5 h-5">
@@ -513,7 +532,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Fullscreen */}
               <button
                 onClick={toggleFullscreen}
-                className="hidden md:flex p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="hidden md:flex p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#3D3B8E] dark:hover:text-gray-200 transition-colors"
               >
                 <FiMaximize className="text-lg" />
               </button>
@@ -525,11 +544,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="relative">
                 <button
                   onClick={() => setNotifOpen(!notifOpen)}
-                  className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                  className="relative p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-[#3D3B8E] dark:hover:text-gray-200 transition-colors"
                 >
                   <FiBell className="text-lg" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1 shadow-sm">
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#E84040] text-white text-[10px] font-bold rounded-full px-1 shadow-sm">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
@@ -551,7 +570,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <p className="text-[10px] text-gray-400 dark:text-gray-500">{getRoleName()}</p>
                 </div>
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F5A623] to-[#E8890C] flex items-center justify-center text-white font-bold text-xs shadow">
                     {(user?.full_name || user?.email || 'U').charAt(0).toUpperCase()}
                   </div>
                   <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-gray-800 ${getRoleColor()}`} />
@@ -563,20 +582,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Expandable search bar */}
           <div className={`overflow-hidden transition-all duration-300 ${searchOpen ? 'max-h-14 border-t border-gray-100 dark:border-gray-700' : 'max-h-0'}`}>
             <div className="flex items-center px-4 py-2 bg-gray-50 dark:bg-gray-800/50">
-              <FiSearch className="text-gray-400 dark:text-gray-500 mr-2" />
+              <FiSearch className="text-[#F5A623] dark:text-gray-500 mr-2" />
               <input
                 type="text"
                 placeholder="Search pages..."
                 className="flex-1 bg-transparent text-sm outline-none text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 autoFocus={searchOpen}
+                style={{ boxShadow: 'none', border: 'none' }}
               />
-              <button onClick={() => setSearchOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs ml-2">ESC</button>
+              <button onClick={() => setSearchOpen(false)} className="text-gray-400 hover:text-[#3D3B8E] dark:hover:text-gray-300 text-xs ml-2">ESC</button>
             </div>
           </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <main className="flex-1 overflow-y-auto bg-[#F0F2F8] dark:bg-gray-900 transition-colors duration-300 main-scroll">
           <div className="p-6">{children}</div>
         </main>
       </div>
@@ -588,23 +608,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="fixed top-2 right-3 z-[9999] pointer-events-none opacity-70">
         <span className="text-[10px] font-semibold text-gray-400 tracking-widest">POWERED BY ZENTRIXAISOFTSOLUTIONS</span>
       </div>
-
-      {/* Custom scrollbar styles */}
-      <style>{`
-        .sidebar-scroll::-webkit-scrollbar {
-          width: 4px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb {
-          background: rgba(255,255,255,0.1);
-          border-radius: 4px;
-        }
-        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-          background: rgba(255,255,255,0.2);
-        }
-      `}</style>
     </div>
   );
 };

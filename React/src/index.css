@@ -2,6 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== Brand CSS Variables ===== */
+:root {
+  --brand: #5553A0;
+  --brand-dark: #3D3B8E;
+  --brand-darker: #2D2A6E;
+  --accent: #F5A623;
+  --accent-dark: #E8890C;
+  --danger: #E84040;
+  --content-bg: #F0F2F8;
+}
+
+/* ===== Utility Classes ===== */
+@layer components {
+  .glass-card {
+    @apply bg-white rounded-2xl shadow-md border border-gray-100;
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, var(--brand-darker), var(--brand));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+}
+
+/* ===== Focus rings using brand colors ===== */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.25) !important;
+}
+
+/* ===== Sidebar scrollbar (purple theme) ===== */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(45, 42, 110, 0.4);
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(245, 166, 35, 0.35);
+  border-radius: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 166, 35, 0.6);
+}
+
+/* ===== Main content smooth scrollbar ===== */
+.main-scroll {
+  scroll-behavior: smooth;
+}
+.main-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.main-scroll::-webkit-scrollbar-track {
+  background: #E8EAF0;
+  border-radius: 4px;
+}
+.main-scroll::-webkit-scrollbar-thumb {
+  background: #B0B4CC;
+  border-radius: 4px;
+}
+.main-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
 * {
   margin: 0;
   padding: 0;
