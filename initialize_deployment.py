@@ -1,193 +1,122 @@
 """
-Deployment Initialization Script for SchoolERP
+Deployment initialization for SchoolERP (single-school build).
 
-This script initializes a fresh SchoolERP installation by:
-1. Creating the database (if it doesn't exist)
-2. Creating all required tables
-3. Seeding initial data (roles, superadmin account)
+Creates all tables from the SQLAlchemy models, seeds the five base roles,
+seeds a superadmin user, and seeds a default school_settings row so the
+header / receipts have a name to render before the operator updates it.
 
-Run this on any machine after deployment to set up the system.
+Assumes the target database already exists — deploy-on-server.sh creates
+it via sqlcmd before invoking this script. Connection details come from
+the .env file via config.settings (DB_SERVER / DB_NAME / DB_USER / etc).
 
 Usage:
-    python initialize_deployment.py [--db-name DATABASE_NAME]
+    python initialize_deployment.py
 
-Example:
-    python initialize_deployment.py --db-name SchoolERP
-    python initialize_deployment.py --db-name SchoolERP_Prod
+Optional env vars:
+    SUPERADMIN_EMAIL      default: superadmin@prashanthischools.com
+    SUPERADMIN_USERNAME   default: superadmin
+    SUPERADMIN_PASSWORD   default: superadmin@123
+    SCHOOL_NAME           default: My School (used to seed school_settings)
 """
 
-import argparse
-from datetime import datetime
+import os
+import sys
 from sqlalchemy.orm import Session
-from sqlalchemy import text
 from database import SessionLocal, engine, Base
-from models import Role, User, School
+from models import Role, User, SchoolSettings
 from auth import AuthService
-from config import settings
-
-def create_database(db_name: str, server: str = None, user: str = None, password: str = None, use_windows_auth: bool = True):
-    """Create database if it doesn't exist."""
-    print(f"\n[*] Initializing database '{db_name}'...")
-    # For Docker deployment, database is created via SQLAlchemy ORM in create_tables()
-    # This function is a no-op since we use pymssql which creates DB automatically
-    print(f"[OK] Database '{db_name}' initialization deferred to table creation")
-    return True
 
 
-def create_tables():
-    """Create all database tables from models."""
+SUPERADMIN_EMAIL    = os.environ.get("SUPERADMIN_EMAIL",    "superadmin@prashanthischools.com")
+SUPERADMIN_USERNAME = os.environ.get("SUPERADMIN_USERNAME", "superadmin")
+SUPERADMIN_PASSWORD = os.environ.get("SUPERADMIN_PASSWORD", "superadmin@123")
+SCHOOL_NAME         = os.environ.get("SCHOOL_NAME",         "My School")
+
+
+def create_tables() -> bool:
     print("\n[*] Creating database tables...")
     try:
         Base.metadata.create_all(bind=engine)
-        print("[OK] Database tables created successfully")
+        print("[OK] Tables created (or already present)")
         return True
     except Exception as e:
-        print(f"[ERROR] Failed to create tables: {e}")
+        print(f"[ERROR] create_all failed: {e}")
         return False
 
 
-def seed_initial_data(db: Session):
-    """Seed initial required data (roles and superadmin)."""
-    print("\n[*] Seeding initial data...")
-
-    try:
-        # Create roles
-        roles_data = [
-            {"name": "super_admin", "description": "Super Administrator - Full system access"},
-            {"name": "admin", "description": "School Administrator"},
-            {"name": "teacher", "description": "Teacher"},
-            {"name": "student", "description": "Student"},
-            {"name": "parent", "description": "Parent/Guardian"},
-        ]
-
-        for role_data in roles_data:
-            existing = db.query(Role).filter(Role.name == role_data["name"]).first()
-            if not existing:
-                role = Role(**role_data)
-                db.add(role)
-
-        db.commit()
-        print("[OK] Roles created")
-
-        # Create superadmin user
-        super_admin_role = db.query(Role).filter(Role.name == "super_admin").first()
-
-        existing_admin = db.query(User).filter(User.username == "superadmin").first()
-        if not existing_admin:
-            superadmin = User(
-                email="superadmin@prashanthischools.com",
-                username="superadmin",
-                full_name="Super Administrator",
-                phone="0000000000",
-                hashed_password=AuthService.hash_password("superadmin@123"),
-                role_id=super_admin_role.id,
-                school_id=None,  # Super admin has no school restriction
-                is_active=True
-            )
-            db.add(superadmin)
-            db.commit()
-            print("[OK] Superadmin user created")
-            print("\n    Superadmin Credentials:")
-            print("    Username: superadmin")
-            print("    Password: superadmin@123")
-        else:
-            print("[OK] Superadmin user already exists")
-
-        return True
-    except Exception as e:
-        print(f"[ERROR] Failed to seed initial data: {e}")
-        db.rollback()
-        return False
+def seed_roles(db: Session) -> None:
+    roles = [
+        ("super_admin", "Super Administrator - Full system access"),
+        ("admin",       "School Administrator"),
+        ("teacher",     "Teacher"),
+        ("student",     "Student"),
+        ("parent",      "Parent/Guardian"),
+    ]
+    for name, description in roles:
+        if not db.query(Role).filter(Role.name == name).first():
+            db.add(Role(name=name, description=description))
+    db.commit()
+    print("[OK] Roles seeded")
 
 
-def main():
-    """Main initialization function."""
-    parser = argparse.ArgumentParser(
-        description="Initialize SchoolERP deployment",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python initialize_deployment.py
-  python initialize_deployment.py --db-name SchoolERP_Prod
-        """
-    )
-    parser.add_argument(
-        "--db-name",
-        type=str,
-        default="SchoolERP",
-        help="Database name to create/initialize (default: SchoolERP)"
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        default="localhost\\SQLEXPRESS",
-        help="SQL Server address (default: localhost\\SQLEXPRESS)"
-    )
-    parser.add_argument(
-        "--windows-auth",
-        action="store_true",
-        default=True,
-        help="Use Windows Authentication (default: True)"
-    )
-    parser.add_argument(
-        "--sql-user",
-        type=str,
-        help="SQL Server username (only for SQL authentication)"
-    )
-    parser.add_argument(
-        "--sql-password",
-        type=str,
-        help="SQL Server password (only for SQL authentication)"
-    )
+def seed_superadmin(db: Session) -> None:
+    if db.query(User).filter(User.username == SUPERADMIN_USERNAME).first():
+        print(f"[OK] Superadmin '{SUPERADMIN_USERNAME}' already exists")
+        return
 
-    args = parser.parse_args()
+    super_admin_role = db.query(Role).filter(Role.name == "super_admin").first()
+    if not super_admin_role:
+        raise RuntimeError("super_admin role missing — seed_roles() must run first")
 
-    print("\n" + "="*60)
+    db.add(User(
+        email=SUPERADMIN_EMAIL,
+        username=SUPERADMIN_USERNAME,
+        full_name="Super Administrator",
+        phone="0000000000",
+        hashed_password=AuthService.hash_password(SUPERADMIN_PASSWORD),
+        role_id=super_admin_role.id,
+        is_active=True,
+    ))
+    db.commit()
+    print(f"[OK] Superadmin created — username={SUPERADMIN_USERNAME}, email={SUPERADMIN_EMAIL}")
+
+
+def seed_school_settings(db: Session) -> None:
+    if db.query(SchoolSettings).first():
+        print("[OK] school_settings row already exists")
+        return
+    db.add(SchoolSettings(school_name=SCHOOL_NAME))
+    db.commit()
+    print(f"[OK] school_settings seeded with school_name='{SCHOOL_NAME}'")
+
+
+def main() -> int:
+    print("=" * 60)
     print("   SCHOOLERP DEPLOYMENT INITIALIZATION")
-    print("="*60)
+    print("=" * 60)
 
-    # Step 1: Create database
-    if not create_database(
-        args.db_name,
-        server=args.server,
-        user=args.sql_user,
-        password=args.sql_password,
-        use_windows_auth=args.windows_auth
-    ):
-        print("\n[ERROR] Initialization failed at database creation")
-        return False
-
-    # Step 2: Create tables
     if not create_tables():
-        print("\n[ERROR] Initialization failed at table creation")
-        return False
+        return 1
 
-    # Step 3: Seed initial data
     db = SessionLocal()
     try:
-        if not seed_initial_data(db):
-            print("\n[ERROR] Initialization failed at data seeding")
-            return False
+        seed_roles(db)
+        seed_superadmin(db)
+        seed_school_settings(db)
+    except Exception as e:
+        print(f"[ERROR] seeding failed: {e}")
+        db.rollback()
+        return 1
     finally:
         db.close()
 
-    print("\n" + "="*60)
-    print("   INITIALIZATION COMPLETED SUCCESSFULLY!")
-    print("="*60)
-    print("\n[i] Next Steps:")
-    print("    1. Log in with superadmin account")
-    print("    2. Create schools and administrators")
-    print("    3. Add teachers, students, and other users")
-    print("\n[i] For production, remember to:")
-    print("    - Change the superadmin password immediately")
-    print("    - Configure database backups")
-    print("    - Set up proper access controls")
-    print("\n" + "="*60 + "\n")
-
-    return True
+    print("\n" + "=" * 60)
+    print("   INITIALIZATION COMPLETE")
+    print("=" * 60)
+    print(f"\nLogin: {SUPERADMIN_USERNAME} / {SUPERADMIN_PASSWORD}")
+    print("Change the superadmin password after first login.\n")
+    return 0
 
 
 if __name__ == "__main__":
-    import sys
-    success = main()
-    sys.exit(0 if success else 1)
+    sys.exit(main())
