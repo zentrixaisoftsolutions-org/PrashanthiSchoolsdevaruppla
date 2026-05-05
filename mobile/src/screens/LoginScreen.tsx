@@ -1,201 +1,166 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, KeyboardAvoidingView, Platform, ScrollView, Alert, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
 import { useAuth } from '../contexts/AuthContext';
-import { COLORS, OFFLINE_DEMO_CREDENTIALS } from '../config/constants';
+import { colors, spacing, radius } from '../theme';
+import { SCHOOL_NAME, API_BASE_URL } from '../config';
 
-const LoginScreen = () => {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+const LoginScreen: React.FC = () => {
+  const nav = useNavigation<any>();
+  const { requestOtp } = useAuth();
+  const [mobile, setMobile] = useState('');
+  const [role, setRole] = useState<'parent' | 'teacher'>('parent');
+  const [busy, setBusy] = useState(false);
 
-  const handleLogin = async () => {
-    if (!identifier || !password) {
-      Alert.alert('Error', 'Please enter your email or mobile number and password');
+  const onSubmit = async () => {
+    const m = mobile.replace(/\D/g, '');
+    if (m.length !== 10) {
+      Alert.alert('Invalid mobile', 'Please enter a 10-digit mobile number.');
       return;
     }
-
-    setLoading(true);
+    setBusy(true);
     try {
-      await login(identifier, password);
-      // Navigation will be handled by the navigation setup
-    } catch (error: any) {
-      Alert.alert('Login Failed', error.message || 'Invalid credentials');
+      const r = await requestOtp(m, role);
+      nav.navigate('Otp', { mobile: r.mobile_used, masked_email: r.masked_email, role: r.role });
+    } catch (e: any) {
+      // Surface the real failure so we can tell network issues from API errors.
+      const status = e?.response?.status;
+      const apiDetail = e?.response?.data?.detail;
+      const code = e?.code; // e.g. ERR_NETWORK, ECONNABORTED
+      const msg = e?.message;
+      let detail: string;
+      if (apiDetail) {
+        detail = typeof apiDetail === 'string' ? apiDetail : JSON.stringify(apiDetail);
+      } else if (status) {
+        detail = `Server returned ${status}.`;
+      } else {
+        detail = `Network error: ${code || ''} ${msg || ''}`.trim();
+      }
+      detail += `\n\nAPI: ${API_BASE_URL}`;
+      Alert.alert('Error', detail);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoPlaceholder}>
-            <Text style={styles.logoText}>KRISHNAVENI{"\n"}TALENT HIGH SCHOOL</Text>
-          </View>
-          <Text style={styles.welcomeText}>Welcome Back</Text>
-          <Text style={styles.subtitleText}>Sign in to continue</Text>
-        </View>
-
-        <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email or Mobile Number</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter email or mobile number"
-              placeholderTextColor="#9ca3af"
-              value={identifier}
-              onChangeText={setIdentifier}
-              keyboardType="default"
-              autoCapitalize="none"
-              autoComplete="username"
-            />
+    <LinearGradient colors={[colors.primary, colors.primaryDark]} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <View style={styles.header}>
+            <View style={styles.logoBadge}>
+              <Ionicons name="school" size={56} color="#fff" />
+            </View>
+            <Text style={styles.appName}>{SCHOOL_NAME}</Text>
+            <Text style={styles.tag}>Parent &amp; Teacher Portal</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your password"
-              placeholderTextColor="#9ca3af"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-              autoComplete="password"
-            />
-          </View>
-
-          <TouchableOpacity
-            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#ffffff" />
-            ) : (
-              <Text style={styles.loginButtonText}>Login</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              Use your registered email or mobile number to login
+          <Card style={styles.card}>
+            <Text style={styles.title}>Sign in</Text>
+            <Text style={styles.subtitle}>
+              Choose your account type, then enter your registered mobile. We'll send a one-time password to your registered email.
             </Text>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+            <View style={styles.field}>
+              <Text style={styles.label}>Login as</Text>
+              <View style={styles.roleRow}>
+                <Pressable
+                  onPress={() => setRole('parent')}
+                  style={[styles.roleChip, role === 'parent' && styles.roleChipActive]}
+                >
+                  <Ionicons
+                    name="people-outline"
+                    size={18}
+                    color={role === 'parent' ? '#fff' : colors.primary}
+                  />
+                  <Text style={[styles.roleChipText, role === 'parent' && styles.roleChipTextActive]}>
+                    Parent
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setRole('teacher')}
+                  style={[styles.roleChip, role === 'teacher' && styles.roleChipActive]}
+                >
+                  <Ionicons
+                    name="school-outline"
+                    size={18}
+                    color={role === 'teacher' ? '#fff' : colors.primary}
+                  />
+                  <Text style={[styles.roleChipText, role === 'teacher' && styles.roleChipTextActive]}>
+                    Teacher
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label}>Mobile Number</Text>
+              <View style={styles.inputWrap}>
+                <Text style={styles.prefix}>+91</Text>
+                <TextInput
+                  value={mobile}
+                  onChangeText={(t) => setMobile(t.replace(/\D/g, '').slice(0, 10))}
+                  keyboardType="number-pad"
+                  placeholder="10-digit mobile"
+                  placeholderTextColor={colors.textMuted}
+                  style={styles.input}
+                  maxLength={10}
+                />
+              </View>
+            </View>
+
+            <Button title="Send OTP" onPress={onSubmit} loading={busy} />
+          </Card>
+
+          <Text style={styles.foot}>
+            Use the same mobile number that's registered with the school.
+          </Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
+  container: { flexGrow: 1, padding: spacing.xl, justifyContent: 'center' },
+  header: { alignItems: 'center', marginBottom: spacing.xl },
+  logoBadge: {
+    width: 96, height: 96, borderRadius: 48,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: spacing.md,
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 24,
+  appName: { color: '#fff', fontSize: 22, fontWeight: '800', textAlign: 'center' },
+  tag: { color: 'rgba(255,255,255,0.8)', marginTop: 4 },
+  card: { gap: spacing.md },
+  title: { fontSize: 22, fontWeight: '800', color: colors.text },
+  subtitle: { color: colors.textMuted, marginBottom: spacing.sm, lineHeight: 20 },
+  field: { gap: 6 },
+  label: { fontSize: 13, fontWeight: '600', color: colors.text },
+  inputWrap: {
+    flexDirection: 'row', alignItems: 'center',
+    borderWidth: 1, borderColor: colors.border, borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 48,
+  prefix: { color: colors.textMuted, marginRight: spacing.sm, fontWeight: '700' },
+  input: { flex: 1, paddingVertical: 12, fontSize: 16, color: colors.text },
+  roleRow: { flexDirection: 'row', gap: spacing.sm },
+  roleChip: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 6, paddingVertical: 10, borderRadius: radius.md,
+    borderWidth: 1, borderColor: colors.border, backgroundColor: '#fff',
   },
-  logoPlaceholder: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  logoText: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: COLORS.text,
-    marginBottom: 8,
-  },
-  subtitleText: {
-    fontSize: 16,
-    color: COLORS.textSecondary,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text,
-  },
-  loginButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 12,
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
-  },
-  loginButtonDisabled: {
-    opacity: 0.7,
-  },
-  loginButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  infoContainer: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-  infoText: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-  },
+  roleChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  roleChipText: { color: colors.text, fontWeight: '700' },
+  roleChipTextActive: { color: '#fff' },
+  foot: { color: 'rgba(255,255,255,0.85)', marginTop: spacing.xl, textAlign: 'center' },
 });
 
 export default LoginScreen;

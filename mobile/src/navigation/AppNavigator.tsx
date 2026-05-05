@@ -110,7 +110,7 @@ const DrawerNavigator = () => {
         headerTitle: () => (
           <View style={{ alignItems: 'center' }}>
             <Text style={{ color: '#fff', fontSize: 11, fontWeight: '600', letterSpacing: 0.5 }}>
-              KRISHNAVENI TALENT HIGH SCHOOL
+              SRI SAI PRASHANTHI VIDYANIKETAN
             </Text>
           </View>
         ),

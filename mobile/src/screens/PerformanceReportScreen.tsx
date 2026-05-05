@@ -208,7 +208,7 @@ const PerformanceReportScreen = () => {
       <ScrollView style={styles.reportScroll}>
         {/* Header */}
         <View style={styles.reportHeader}>
-          <Text style={styles.schoolName}>KRISHNAVENI TALENT HIGH SCHOOL</Text>
+          <Text style={styles.schoolName}>SRI SAI PRASHANTHI VIDYANIKETAN</Text>
           <Text style={styles.schoolSub}>MENTORED FOR LIFE</Text>
           <Text style={styles.reportTitle}>STUDENTS PERFORMANCE REPORT</Text>
         </View>

@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "@types/react": "~19.2.10",
+    "expo-build-properties": "~55.0.13",
+    "expo-constants": "~55.0.16",
+    "expo-device": "~55.0.16",
+    "expo-document-picker": "~55.0.13",
+    "expo-image": "~55.0.10",
+    "expo-image-picker": "~55.0.20",
+    "expo-linear-gradient": "~55.0.13",
+    "expo-notifications": "~55.0.22",
+    "expo-status-bar": "~55.0.6",
+    "metro": "^0.83.7",
+    "react": "^19.2.0",
+    "react-native": "^0.83.6",
+    "react-native-gesture-handler": "~2.30.0",
+    "react-native-screens": "~4.23.0"
+  }
+}

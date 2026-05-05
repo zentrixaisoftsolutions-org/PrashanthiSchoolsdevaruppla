@@ -1,0 +1,51 @@
+﻿{
+  "id": "ee1dd340-bca0-48ad-b3b5-b694d9f3a104",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "EAS_BUILD_UNKNOWN_GRADLE_ERROR",
+    "message": "Gradle build failed with unknown error. See logs for the \"Run gradlew\" phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "019de332-035d-7276-8b75-a15aaf5318f0",
+    "hash": "83c26b2c6f98c27e5b7cc2b5b9b9571029335554"
+  },
+  "initiatingActor": {
+    "id": "d37cdd66-053e-4f08-9088-20bd5a680920",
+    "displayName": "muraritech"
+  },
+  "logFiles": [
+    "https://job-logs.eascdn.net/production/ee1dd340-bca0-48ad-b3b5-b694d9f3a104/1777633199163-e71b13ba-fd40-405e-b1c2-dbf82b8d1f4c.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260501%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260501T110629Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=329f519d6db27f4fe6bd2ca5f7a1c6bf9199a8efe797694e74c7d14303d1c00c957cf7391af63b645afcb4e717b75e409d7d91bd0d8550896aaf1a8975d67a91329349b6556e435f725a7d3e0209c247d96b6f569726d9599b72811376f22f4f6e0c5cfa855ce926aa2b578210b3f661a5828e217a8b7baa00aea3aca4dabcc60bc7aaae6371405675afe77a83c96e1f1b82d75e68d79d74e0f0270b74bc86d8d52ba27331cf6c934375af663868ebb4c0e785e5121ee1ba618a9228e8df9d30b0d9d2308deca48216902407746156c1fc4c7af3d672ad6797a6a7426412aa1f0a3ca80d249a0172794bdb26ae4424de71d32f0e99e623fca61752a28859cb62",
+    "https://job-logs.eascdn.net/production/ee1dd340-bca0-48ad-b3b5-b694d9f3a104/1777633207200-94eb7ef7-8739-4e35-a775-56af6caa2213.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260501%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260501T110629Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=6f1742f263f447b645f1f7436b11f1dec0030b36d59b09cc7695c16a86fe39ad8d0e0d80b07f4321b02a702ad133bbf4493c9a230fab7c54623cb68ed9cf060799de6f6827e6632efd6576fe2e7de956315b8e4603a3f3e6358f0d8acbc0cae6e44a08ddb15db9ac3d669a87982423b80c4d97ff63db7fbd9f233339c2dfc243ad4b4161f6fed82d89cd9eb74eb3ef662d4a0993fa363cd79e8b8882c7e8b9dd3b713336798cbc41e974cb482b9d08d7d9343df3b570aecb82f932dcd3eecbb02e6aec1cdcbeae84824b4d3f1d3277414d7c8821e42bb6a22f089c9e5b7ee1f477108e89dd14bf0b68eed7d2dbafa9ed5b82ed879b23637ddd40f8c3fbe632c0",
+    "https://job-logs.eascdn.net/production/ee1dd340-bca0-48ad-b3b5-b694d9f3a104/1777633207459-3cf2395e-be0c-4b0b-827d-28eed0d19039.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260501%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260501T110629Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=02b31d40e00827d5f015aa67e84ff5eb7b72289231a5f57495a3c0054724c9909172edfbbf1926efec1d33c9d5a9de976fb2da51696d2767939ead7c0d2a2b8dd6219ab2bac70feaebc58da0bf2d612e78e06d82e371fa4885c9bc471d90e07197bc4bb9aba8a6d6a99a71e1d7252c4c643ed6e073d6c40ffbedeec5f2a0d8d3cae6ae73af9cf5656cdb5e34711a9f2f50d0133d23d37e2b317667b70b42f0390f921092866ddace2ffa88d9209d112a8f08ab3ff51b061d4ccadeb23c68db7d54f5a10407c97981ca58fa28c9ea64f367ebb317a5501d4bf66849e724aed36a64ce94a9254ed0b078e614cce3ecd69034ccd99b915ae72d2e4a2ee3b7b397f3",
+    "https://job-logs.eascdn.net/production/ee1dd340-bca0-48ad-b3b5-b694d9f3a104/1777633207672-6539d88d-e65b-4003-b7ca-7d09f433ba22.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260501%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260501T110629Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=1a3c33c4a43673309456ea247b4261488124d925305a3ec18689d4628a83d7ff02844ab7c96a2d1b808f8865b2798333c879807fa027219c0e891b1033dd79e65a96f6859c7e6c48c13842e07caf522e50ea1fffb31e1c77506545c5a9c217f8b33223bcd5174254a3a9fa39c6e532612d64be7c1f758e97e21671f5dc59431d803b78da0202bfe8b52a552b04cc1484e1d6434bb2051147fd7702025df2e18980f62806f6d3a1ca90b04fa6a81af887f1f1264a5179bf2e891b758a3a43d0b390d6503d34354f31318674b6f51ba9f233e6ffee0fe0644be27aa6f5845e498d2d54232b4125e773b390b1487889ca7394fe8407751d212bb96eda797660fc65"
+  ],
+  "project": {
+    "id": "7afc64ba-e8f5-4bc9-a493-4fa07265ba84",
+    "name": "AIMob",
+    "slug": "AIMob",
+    "ownerAccount": {
+      "id": "79010276-436f-407c-a3f7-2eab7daf20bb",
+      "name": "muraritech"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "sdkVersion": "54.0.0",
+  "appVersion": "1.0.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "9b147c432720e5046f2a627f763b720a6018f565",
+  "gitCommitMessage": "eas init",
+  "priority": "NORMAL_PLUS",
+  "createdAt": "2026-05-01T10:59:58.868Z",
+  "updatedAt": "2026-05-01T11:03:06.300Z",
+  "completedAt": "2026-05-01T11:02:57.095Z",
+  "expirationDate": "2026-05-15T10:59:58.930Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 171,
+    "buildQueueTime": 47985,
+    "buildDuration": 129742
+  }
+}

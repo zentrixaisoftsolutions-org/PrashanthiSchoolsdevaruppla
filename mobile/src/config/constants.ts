@@ -3,13 +3,13 @@
 
 // Development URL - Update with your local IP address
 // For Android Emulator, use http://10.0.2.2:8000
-const DEV_API_URL = 'http://192.168.1.2:8000';
+const DEV_API_URL = 'http://178.104.244.231';
 
 // Production URL - Update with your production server URL
-const PROD_API_URL = 'http://192.168.1.2:8000';
+const PROD_API_URL = 'http://178.104.244.231';
 
 // Staging URL (optional)
-const STAGING_API_URL = 'http://192.168.1.2:8000';
+const STAGING_API_URL = 'http://178.104.244.231';
 
 // Environment detection
 // You can override by setting process.env.REACT_APP_ENV to 'development', 'staging', or 'production'
@@ -146,7 +146,7 @@ export const API_ENDPOINTS = {
 
 // App Configuration
 export const APP_CONFIG = {
-  APP_NAME: 'KRISHNAVENI TALENT HIGH SCHOOL',
+  APP_NAME: 'SRI SAI PRASHANTHI VIDYANIKETAN',
   VERSION: '1.0.0',
   TOKEN_KEY: 'access_token',
   USER_KEY: 'user_data',

@@ -1,33 +1,82 @@
 {
   "expo": {
-    "name": "KRISHNAVENI TALENT HIGH SCHOOL",
-    "slug": "school-erp-mobile",
+    "name": "Sri Sai Prashanthi Vidyaniketan",
+    "slug": "prashanthi-schools",
     "version": "1.0.0",
-    "sdkVersion": "54.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/zentrix-ai-logo.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "prashanthischools",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/school-logo.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0f766e"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.schoolerp.mobile"
+      "bundleIdentifier": "com.prashanthischools.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSCameraUsageDescription": "Allow Sri Sai Prashanthi Vidyaniketan to use the camera to capture homework worksheets.",
+        "NSPhotoLibraryUsageDescription": "Allow Sri Sai Prashanthi Vidyaniketan to access your photos to attach worksheets."
+      }
     },
     "android": {
+      "package": "com.prashanthischools.app",
+      "versionCode": 3,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/zentrix-ai-logo.png",
+        "backgroundColor": "#0f766e"
       },
-      "package": "com.schoolerp.mobile"
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
+    "notification": {
+      "iconColor": "#0f766e",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Sri Sai Prashanthi Vidyaniketan"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Sri Sai Prashanthi Vidyaniketan to access your photos to attach homework worksheets.",
+          "cameraPermission": "Allow Sri Sai Prashanthi Vidyaniketan to use the camera to capture homework worksheets."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#0f766e"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7afc64ba-e8f5-4bc9-a493-4fa07265ba84"
+      }
+    },
+    "owner": "muraritech"
   }
 }

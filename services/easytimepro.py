@@ -32,7 +32,7 @@ class EasyTimeProClient:
     """HTTP client for the EasyTimePro REST API."""
 
     def __init__(self):
-        self.base_url = settings.EASYTIMEPRO_BASE_URL.rstrip("/")
+        self.base_url = settings.EASYTIMEPRO_BASE_URL.strip().rstrip("/")
         self.username = settings.EASYTIMEPRO_USERNAME
         self.password = settings.EASYTIMEPRO_PASSWORD
         self.verify_ssl = settings.EASYTIMEPRO_VERIFY_SSL
