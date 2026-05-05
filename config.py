@@ -49,10 +49,10 @@ class Settings(BaseSettings):
     # SMTP / Email Configuration (for Help Desk tickets)
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587
-    SMTP_USER: str = "ram.sirapurapu@gmail.com"
+    SMTP_USER: str = "ramakrishnasirapurapu55@gmail.com"
     SMTP_PASSWORD: str = "agqn dkob humu srfv"
-    SMTP_FROM_EMAIL: str = "ram.sirapurapu@gmail.com"
-    HELPDESK_RECIPIENT_EMAIL: str = "ramakrishnasirapurapu55@gmail.com"
+    SMTP_FROM_EMAIL: str = "ramakrishnasirapurapu55@gmail.com"
+    HELPDESK_RECIPIENT_EMAIL: str = "ram.sirapurapu@gmail.com"
 
     class Config:
         env_file = ".env"
