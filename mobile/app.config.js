@@ -62,8 +62,8 @@ module.exports = {
       apiBaseUrl: IS_DEV
         ? 'http://178.104.244.231/api'
         : 'http://178.104.244.231/api',
-      eas: { projectId: '7afc64ba-e8f5-4bc9-a493-4fa07265ba84' },
+      eas: { projectId: '6fce7799-823f-4d72-92c3-9a8f2cca5383' },
     },
-    owner: 'muraritech',
+    owner: 'ramkri0303',
   },
 };
