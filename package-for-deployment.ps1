@@ -7,7 +7,7 @@ param(
     [string]$OutputDir = $PSScriptRoot,
     [switch]$SkipFrontendBuild = $false,
     [switch]$SkipBackendOnly = $false,
-    [string]$ServerIP = "46.225.100.9",
+    [string]$ServerIP = "178.104.244.231",
     [switch]$Upload = $false,
     [switch]$Deploy = $false,
     [switch]$FirstTime = $false
@@ -71,7 +71,9 @@ Write-Host "[2/4] Creating backend.zip..." -ForegroundColor Yellow
 $BackendZip = "$OutputDir\backend.zip"
 if (Test-Path $BackendZip) { Remove-Item $BackendZip -Force }
 
-# Files and folders to include in backend
+# Files and folders to include in backend.
+# Optional items (e.g. backup_database.py, migrations/) are added via Test-Path
+# below if they happen to exist; missing ones are silently skipped.
 $BackendItems = @(
     "main.py",
     "config.py",
@@ -80,14 +82,21 @@ $BackendItems = @(
     "schemas.py",
     "auth.py",
     "initialize_deployment.py",
-    "backup_database.py",
-    "restore_database.py",
     "requirements.txt",
     "routers",
     "services",
-    "utils",
+    "utils"
+)
+
+# Optional items — included only if present in the project tree.
+$OptionalBackendItems = @(
+    "backup_database.py",
+    "restore_database.py",
     "migrations"
 )
+foreach ($opt in $OptionalBackendItems) {
+    if (Test-Path "$ProjectRoot\$opt") { $BackendItems += $opt }
+}
 
 # Create temporary staging directory
 $StagingDir = "$env:TEMP\schoolerp-backend-stage"
@@ -120,10 +129,7 @@ Get-ChildItem -Path $StagingDir -Recurse -File -Force |
     Remove-Item -Force -ErrorAction SilentlyContinue
 
 # Create the ZIP using .NET API (writes POSIX-style "/" separators)
-[System.IO.Compression.ZipFile]::CreateFromDirectory(
-    $StagingDir, $BackendZip,
-    [System.IO.Compression.CompressionLevel]::Optimal, $false
-)
+tar -a -c -f $BackendZip -C $StagingDir .
 Remove-Item $StagingDir -Recurse -Force
 
 $backendSize = [Math]::Round((Get-Item $BackendZip).Length / 1MB, 2)
@@ -145,10 +151,7 @@ if (-not $SkipBackendOnly) {
         exit 1
     }
 
-    [System.IO.Compression.ZipFile]::CreateFromDirectory(
-        $FrontendDist, $FrontendZip,
-        [System.IO.Compression.CompressionLevel]::Optimal, $false
-    )
+   tar -a -c -f $FrontendZip -C $FrontendDist .
 
     $frontendSize = [Math]::Round((Get-Item $FrontendZip).Length / 1MB, 2)
     Write-Host "Frontend packaged: $FrontendZip ($frontendSize MB)" -ForegroundColor Green

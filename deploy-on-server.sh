@@ -11,10 +11,12 @@
 #   - Run as root
 #   - /tmp/backend.zip and /tmp/frontend.zip must be uploaded first
 #
-# Optional environment variables (only for --first-time):
+# Optional environment variables:
+#   DB_NAME         SQL Server database name (default: prashanthiSchools)
 #   SA_PASSWORD     SQL Server SA password   (default: Password96123)
-#   SECRET_KEY      JWT secret key           (default: random)
+#   SECRET_KEY      JWT secret key           (default: random, --first-time only)
 #   APP_USER        Linux user for the app   (default: schoolerp)
+#   SCHOOL_NAME     Seed value for school_settings.school_name (--first-time only)
 
 set -e
 
@@ -25,8 +27,10 @@ APP_USER="${APP_USER:-schoolerp}"
 APP_DIR="/var/www/schoolerp"
 FRONTEND_DIR="/var/www/html/schoolerp"
 BACKEND_PORT=8000
+DB_NAME="${DB_NAME:-prashanthiSchools}"
 SA_PASSWORD="${SA_PASSWORD:-Password96123}"
 SECRET_KEY="${SECRET_KEY:-$(openssl rand -hex 32 2>/dev/null || echo "change-this-secret-key-in-production")}"
+SCHOOL_NAME="${SCHOOL_NAME:-My School}"
 SERVER_IP="$(hostname -I | awk '{print $1}')"
 
 # Mode flag
@@ -147,9 +151,8 @@ log "[8/12] Deploying backend code..."
 # Clean previous backend code (preserve venv + .env + uploads)
 rm -rf "$APP_DIR/main.py" "$APP_DIR/config.py" "$APP_DIR/database.py" \
        "$APP_DIR/models.py" "$APP_DIR/schemas.py" "$APP_DIR/auth.py" \
-       "$APP_DIR/initialize_deployment.py" "$APP_DIR/backup_database.py" \
-       "$APP_DIR/restore_database.py" "$APP_DIR/requirements.txt" \
-       "$APP_DIR/routers" "$APP_DIR/services" "$APP_DIR/utils" "$APP_DIR/migrations"
+       "$APP_DIR/initialize_deployment.py" "$APP_DIR/requirements.txt" \
+       "$APP_DIR/routers" "$APP_DIR/services" "$APP_DIR/utils"
 
 unzip -o -q /tmp/backend.zip -d "$APP_DIR"
 
@@ -187,7 +190,7 @@ else
     cat > "$APP_DIR/.env" << ENVEOF
 # SQL Server Connection
 DB_SERVER=localhost
-DB_NAME=SchoolERP
+DB_NAME=$DB_NAME
 DB_USER=sa
 DB_PASSWORD=$SA_PASSWORD
 DB_DRIVER=ODBC Driver 17 for SQL Server
@@ -210,7 +213,7 @@ ok ".env configured"
 # FIRST-TIME ONLY: Create database + initialize tables
 # ============================================
 if [ "$FIRST_TIME" = true ]; then
-    log "[11/12] Creating SchoolERP database..."
+    log "[11/12] Creating database '$DB_NAME'..."
 
     # Wait for SQL Server to be ready
     for i in {1..30}; do
@@ -220,16 +223,17 @@ if [ "$FIRST_TIME" = true ]; then
         sleep 2
     done
 
-    # Create database if it doesn't exist
+    # Create database if it doesn't exist (case-insensitive name compare)
     /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$SA_PASSWORD" \
-        -Q "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='SchoolERP') CREATE DATABASE SchoolERP" \
-        || fail "Could not create database (check SA password)"
-    ok "Database 'SchoolERP' ready"
+        -Q "IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='$DB_NAME') CREATE DATABASE [$DB_NAME]" \
+        || fail "Could not create database '$DB_NAME' (check SA password)"
+    ok "Database '$DB_NAME' ready"
 
     log "Initializing tables and seed data..."
     cd "$APP_DIR"
-    sudo -u "$APP_USER" venv/bin/python initialize_deployment.py
-    ok "Tables created, superadmin seeded"
+    sudo -u "$APP_USER" --preserve-env=SCHOOL_NAME \
+        env SCHOOL_NAME="$SCHOOL_NAME" venv/bin/python initialize_deployment.py
+    ok "Tables created, roles + superadmin + school_settings seeded"
 else
     log "[11/12] Skipping DB init (update mode)"
 fi
