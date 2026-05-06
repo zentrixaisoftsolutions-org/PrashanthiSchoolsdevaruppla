@@ -161,6 +161,7 @@ def sync_devices_from_server() -> List[dict]:
     """
     client = get_client()
     terminals = client.get_terminals()
+    logger.info(f"[EasyTimePro] Raw terminals response: {terminals}")
     db = SessionLocal()
     try:
         for t in terminals:

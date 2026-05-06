@@ -21,6 +21,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan context manager."""
     # Startup
     print(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
+    print(f"[DEBUG] EasyTimePro Base URL: {settings.EASYTIMEPRO_BASE_URL}")
     from services.device_listener import device_listener_manager
     await device_listener_manager.resume_active_devices()
 
