@@ -26,11 +26,18 @@ $OutputDir   = (Resolve-Path $OutputDir).Path
 Write-Host "Packaging from: $ProjectRoot" -ForegroundColor Cyan
 Write-Host "Output dir    : $OutputDir" -ForegroundColor Cyan
 
-# .NET ZIP API — used instead of Compress-Archive because the latter writes
-# entries with Windows backslashes ("routers\auth.py"), which makes Linux unzip
-# warn ("appears to use backslashes as path separators") and some unzippers
-# extract everything into one flat file.
-Add-Type -AssemblyName System.IO.Compression.FileSystem
+# Use Windows' bundled `tar` (libarchive) to create the deploy ZIPs.
+#
+# Compress-Archive writes entries with backslashes ("routers\auth.py") and
+# [System.IO.Compression.ZipFile]::CreateFromDirectory still trips Linux
+# `unzip`'s "appears to use backslashes as path separators" warning. On
+# some kernels the warning is exit code 1, killing `set -e` server scripts
+# mid-deploy. tar -a -c -f file.zip writes truly POSIX-clean entries.
+$TarExe = "tar"
+if (-not (Get-Command $TarExe -ErrorAction SilentlyContinue)) {
+    Write-Host "ERROR: 'tar' not found. On Windows 10+ it ships with the OS." -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "================================================" -ForegroundColor Green
 Write-Host "  SchoolERP Deployment Packaging Script" -ForegroundColor Green
@@ -128,8 +135,14 @@ Get-ChildItem -Path $StagingDir -Recurse -File -Force |
     Where-Object { $_.Extension -eq ".pyc" -or $_.Extension -eq ".log" } |
     Remove-Item -Force -ErrorAction SilentlyContinue
 
-# Create the ZIP using .NET API (writes POSIX-style "/" separators)
-tar -a -c -f $BackendZip -C $StagingDir .
+# Use bundled tar to create a POSIX-clean ZIP. -a infers format from .zip,
+# -C cd's into the staging dir so entry paths are stored relative
+# ("routers/auth.py" not "C:\...\routers\auth.py").
+& $TarExe -a -c -f $BackendZip -C $StagingDir .
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: tar failed packaging backend (exit $LASTEXITCODE)" -ForegroundColor Red
+    exit 1
+}
 Remove-Item $StagingDir -Recurse -Force
 
 $backendSize = [Math]::Round((Get-Item $BackendZip).Length / 1MB, 2)
@@ -151,7 +164,11 @@ if (-not $SkipBackendOnly) {
         exit 1
     }
 
-   tar -a -c -f $FrontendZip -C $FrontendDist .
+    & $TarExe -a -c -f $FrontendZip -C $FrontendDist .
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "ERROR: tar failed packaging frontend (exit $LASTEXITCODE)" -ForegroundColor Red
+        exit 1
+    }
 
     $frontendSize = [Math]::Round((Get-Item $FrontendZip).Length / 1MB, 2)
     Write-Host "Frontend packaged: $FrontendZip ($frontendSize MB)" -ForegroundColor Green

@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # EasyTimePro (ZKTeco) Server Configuration
-    EASYTIMEPRO_BASE_URL: str = "http://178.104.244.231:8080/"
+    EASYTIMEPRO_BASE_URL: str = "http://178.104.244.231:8080"
     EASYTIMEPRO_USERNAME: str = "admin"
     EASYTIMEPRO_PASSWORD: str = "Zentrix@123"
     EASYTIMEPRO_POLL_INTERVAL: int = 30  # seconds between transaction polls
